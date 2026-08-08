@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "f4rbvTWQv8w=",
+  "dgSpecHash": "kqEO7ycP6vE=",
   "success": true,
-  "projectFilePath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
+  "projectFilePath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Felix\\.nuget\\packages\\bouncycastle\\1.8.9\\bouncycastle.1.8.9.nupkg.sha512",
     "C:\\Users\\Felix\\.nuget\\packages\\bouncycastle.cryptography\\2.2.1\\bouncycastle.cryptography.2.2.1.nupkg.sha512",
@@ -132,9 +132,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "El paquete \"BouncyCastle 1.8.9\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" en lugar de la plataforma de destino del proyecto \"net8.0\". Puede que el paquete no sea totalmente compatible con el proyecto.",
-      "projectPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
+      "projectPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
+      "filePath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
       "libraryId": "BouncyCastle",
       "targetGraphs": [
         "net8.0"
@@ -144,9 +144,9 @@
       "code": "NU1701",
       "level": "Warning",
       "message": "El paquete \"iTextSharp 5.5.13.3\" se restauró con \".NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1\" en lugar de la plataforma de destino del proyecto \"net8.0\". Puede que el paquete no sea totalmente compatible con el proyecto.",
-      "projectPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
+      "projectPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
       "warningLevel": 1,
-      "filePath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
+      "filePath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
       "libraryId": "iTextSharp",
       "targetGraphs": [
         "net8.0"

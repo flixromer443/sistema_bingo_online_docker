@@ -71,8 +71,7 @@ services:
     image: ${APP_NAME}-backend
     container_name: ${APP_NAME}-backend
     volumes:
-      - ./backend:/app/Slamdunk.WebApi
-      #- ./backend:/app/SISTEMA_BINGO_ONLINE
+      - ./backend:/app/sistema_bingo_online
     ports:
       - "5214:5214"
     networks:

@@ -5650,9 +5650,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
-      "projectName": "Slamdunk.WebApi",
-      "projectPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\Slamdunk.WebApi.csproj",
+      "projectUniqueName": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
+      "projectName": "sistema_bingo_online",
+      "projectPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\sistema_bingo_online.csproj",
       "packagesPath": "C:\\Users\\Felix\\.nuget\\packages\\",
       "outputPath": "D:\\WORKSPACES\\proyecto_bingo_online\\backend\\obj\\",
       "projectStyle": "PackageReference",

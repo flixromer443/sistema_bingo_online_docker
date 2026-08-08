@@ -4,10 +4,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0
 WORKDIR /app
 
 # Create a new .NET Web API project
-RUN dotnet new webapi -n Slamdunk.WebApi
+RUN dotnet new webapi -n sistema_bingo_online
 
 # Change to the newly created project directory
-WORKDIR /app/Slamdunk.WebApi
+WORKDIR /app/sistema_bingo_online
+
 
 # Install required packages (compatible with .NET 8)
 RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.10
