@@ -11,7 +11,6 @@ import { Global } from './global';
 export class TableroService {
 
   private apiTablero = Global.apiTablero;
-  //private apiTablero = "http://localhost:5214/api/Tablero/";
 
   constructor(private http: HttpClient) { }
 
