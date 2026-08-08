@@ -1,25 +1,58 @@
-# Use the official Node.js image as the base image
+# Imagen base
 FROM node:18-alpine
 
-# Set the working directory in the container
+# Directorio de trabajo
 WORKDIR /app
 
-# Install Angular CLI globally
+# Copiar package.json y package-lock.json
+COPY package*.json ./
+
+# Instalar Angular CLI
 RUN npm install -g @angular/cli
 
-# Create a new Angular project with the name 'new-angular-app'
-RUN ng new slamdunk-fe --directory ./slamdunk-fe --skip-install
+# Websocket
+RUN npm install @microsoft/signalr
 
-# Navigate into the project directory
-WORKDIR /app/slamdunk-fe
+# Instalar dependencias
+#RUN npm install
 
-# Install the project dependencies
-RUN npm install sweetalert2
-RUN npm i --save-dev @types/file-saver
+# Copiar el resto del proyecto
+#COPY . .
+
+# Exponer puerto
+#EXPOSE 4200
+
+# Ejecutar Angular
+#CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200"]
+
+
+
+# ===========================
+# Build Angular
+# ===========================
+FROM node:18-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+
 RUN npm install
 
-# Expose the port the app runs on
-EXPOSE 4200
+COPY . .
 
-# Set the default command to run the Angular development server
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+RUN npm run build
+
+# ===========================
+# Nginx
+# ===========================
+FROM nginx:alpine
+
+RUN apk add --no-cache gettext
+
+COPY --from=build /app/dist/slamdunk-fe/browser /usr/share/nginx/html
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY src/assets/env.template.js /usr/share/nginx/html/assets/env.template.js
+
+CMD ["/bin/sh","-c","envsubst < /usr/share/nginx/html/assets/env.template.js > /usr/share/nginx/html/assets/env.js && exec nginx -g 'daemon off;'"]

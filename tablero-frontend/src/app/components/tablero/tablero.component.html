@@ -1,0 +1,123 @@
+<div class="tablero-container">
+
+    <!-- PANEL IZQUIERDO -->
+    <aside class="panel-lateral">
+
+        <div class="jugada">
+
+            @if(!esUltimaJugada){
+
+                <h2>JUGADA Nº</h2>
+                <span class="numero-jugada">{{ numeroJugada }}</span>
+
+            } @else {
+
+                <h2>ÚLTIMA JUGADA</h2>
+
+            }
+
+        </div>
+
+        <div class="ultimo-numero">
+
+            <h3>ÚLTIMO NÚMERO</h3>
+
+            <div class="bola">
+
+                {{ ultimoNumero == 0 ? '--' : (ultimoNumero < 10 ? '0' + ultimoNumero : ultimoNumero) }}
+
+            </div>
+
+        </div>
+
+        <div class="acciones">
+
+            @if(!juegoIniciado){
+
+                <button
+                    class="btn iniciar"
+                    (click)="iniciar()">
+
+                    INICIAR
+
+                </button>
+
+            }
+
+            @if(mostrarProximaJugada){
+
+                <button
+                    class="btn siguiente"
+                    (click)="reiniciar()">
+
+                    PRÓXIMA JUGADA
+
+                </button>
+
+            }
+
+        </div>
+
+        <div class="estadisticas">
+
+            <div>
+
+                <strong>Sorteados</strong>
+
+                {{ numerosSorteados.size }}/90
+
+            </div>
+
+            <div>
+
+                <strong>Línea</strong>
+
+                {{ lineas.length }}
+
+            </div>
+
+            <div>
+
+                <strong>Bingo</strong>
+
+                {{ bingos.length }}
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- TABLERO -->
+
+    <section class="panel-tablero">
+
+        @for(fila of filas; track fila){
+
+            <div class="fila">
+
+                @for(numero of obtenerNumerosFila(fila); track numero){
+
+                    <button
+
+                        class="numero"
+
+                        [class.seleccionado]="numerosSorteados.has(numero)"
+
+                        [class.ultimo]="ultimoNumero === numero"
+
+                        (click)="toggleNumero(numero)">
+
+                        {{ numero < 10 ? '0' + numero : numero }}
+
+                    </button>
+
+                }
+
+            </div>
+
+        }
+
+    </section>
+
+</div>

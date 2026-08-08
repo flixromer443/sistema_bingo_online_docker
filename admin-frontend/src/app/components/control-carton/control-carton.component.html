@@ -1,0 +1,80 @@
+<section class="vh-100 d-flex align-items-center">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <p-card>
+
+                    <ng-template pTemplate="header">
+
+                        <div class="text-center py-3">
+
+                            <h2 class="fw-bold">
+                                Cartón N° {{ numeroCarton }}
+                            </h2>
+
+                            <small class="text-muted">
+                                Tocá un número para marcarlo.
+                            </small>
+
+                        </div>
+
+                    </ng-template>
+
+                    <div class="carton">
+
+                        <div
+                            class="fila"
+                            *ngFor="let fila of carton">
+
+                            <button
+                                *ngFor="let numero of fila"
+                                type="button"
+                                class="casilla"
+                                [class.vacia]="numero.valor === null"
+                                [class.marcada]="numero.marcado"
+                                (click)="marcar(numero)"
+                                [disabled]="numero.valor === null">
+
+                                {{ numero.valor ?? '' }}
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="mt-4 d-grid gap-2">
+
+                        <button
+                            type="button"
+                            class="btn btn-success"
+                            (click)="cantarLinea()">
+
+                            Cantar Línea
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-danger"
+                            (click)="cantarBingo()">
+
+                            Cantar Bingo
+
+                        </button>
+
+                    </div>
+
+                </p-card>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

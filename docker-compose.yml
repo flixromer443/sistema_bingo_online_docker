@@ -1,27 +1,79 @@
 version: '3'
 services:
-  app:
+  tablero-frontend:
     build:
-      context: frontend/.
+      context: tablero-frontend/.
       dockerfile: Dockerfile
-    image: ${APP_NAME}-fe
-    container_name: ${APP_NAME}-fe
-    volumes:
-      - ./frontend:/app/${APP_NAME}-fe
-    ports: 
-      - "4200:4200"
+    env_file:
+      - .env
+    environment:
+      - API_AUTH_URL:$API_AUTH_URL
+      - API_GAME_URL:$API_GAME_URL
+      - API_ADMIN_URL:$API_ADMIN_URL
+      - API_GEOREF_URL:$API_GEOREF_URL
+    image: ${APP_NAME}-tablero-frontend
+    container_name: ${APP_NAME}-tablero-frontend
+#    volumes:
+#      - ./frontend:/app/${APP_NAME}-fe
+    ports:
+      - "4202:80"
+    networks:
+      - network # Conecta este servicio a la red ${APP_NAME}-network  
+
+
+  admin-frontend:
+    build:
+      context: admin-frontend/.
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - API_AUTH_URL:$API_AUTH_URL
+      - API_GAME_URL:$API_GAME_URL
+      - API_ADMIN_URL:$API_ADMIN_URL
+      - API_GEOREF_URL:$API_GEOREF_URL
+    image: ${APP_NAME}-admin-frontend
+    container_name: ${APP_NAME}-admin-frontend
+#    volumes:
+#      - ./frontend:/app/${APP_NAME}-fe
+    ports:
+      - "4201:80"
     networks:
       - network # Conecta este servicio a la red ${APP_NAME}-network
 
-  dotnet:
+
+
+
+  frontend:
+    build:
+      context: frontend/.
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - API_AUTH_URL:$API_AUTH_URL
+      - API_GAME_URL:$API_GAME_URL
+      - API_ADMIN_URL:$API_ADMIN_URL
+      - API_GEOREF_URL:$API_GEOREF_URL
+    image: ${APP_NAME}-frontend
+    container_name: ${APP_NAME}-frontend
+#    volumes:
+#      - ./frontend:/app/${APP_NAME}-fe
+    ports:
+      - "4200:80"
+    networks:
+      - network # Conecta este servicio a la red ${APP_NAME}-network
+
+  backend:
     build:
       context: backend/.
       dockerfile: Dockerfile
-    image: ${APP_NAME}-webapi
-    container_name: ${APP_NAME}-webapi
+    image: ${APP_NAME}-backend
+    container_name: ${APP_NAME}-backend
     volumes:
       - ./backend:/app/Slamdunk.WebApi
-    ports: 
+      #- ./backend:/app/SISTEMA_BINGO_ONLINE
+    ports:
       - "5214:5214"
     networks:
       - network # Conecta este servicio a la red ${APP_NAME}-network

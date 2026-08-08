@@ -1,20 +1,40 @@
-<!-- NavBar -->
-<div class="navbar">
-  <p>Nav desde app.component</p>
-  <button routerLink="" class="w3-button"><i class="fa fa-home"></i> Home</button>
-  <button routerLink="tabla" class="w3-button"><i class="fa fa-table"></i> tabla</button>
-  <button routerLink="crear" class="w3-button"><i class="fa fa-plus"></i> Agregar usuario</button>
-</div>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
 
-<!-- Content -->
-<div class="background" id="home">
-<router-outlet />
-<br>
-</div>
+        <a class="navbar-brand d-flex align-items-center" routerLink="/">
+            <img
+                src="assets/1.png"
+                width="35"
+                height="35"
+                class="me-2"
+                alt="Logo">
 
-<!-- Footer -->
-<footer>
-  <a href="  http://localhost:5214/swagger/index.html" Target="_blank">
-    <button class="w3-button"><i class="fa fa-cloud"></i> Swagger</button>
-  </a>
+            <span>Sistema Bingo Online</span>
+        </a>
+
+    </div>
+</nav>
+
+<!-- CONTENIDO -->
+<main class="background">
+
+    <router-outlet></router-outlet>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="text-center py-3 bg-dark">
+
+    <a
+        href="http://localhost:5214/swagger/index.html"
+        target="_blank">
+
+        <button class="btn btn-primary">
+            <i class="fa fa-cloud"></i>
+            Swagger
+        </button>
+
+    </a>
+
 </footer>

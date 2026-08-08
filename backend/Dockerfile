@@ -1,5 +1,5 @@
 # Use the official .NET SDK image as the base image
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 WORKDIR /app
 
@@ -9,18 +9,27 @@ RUN dotnet new webapi -n Slamdunk.WebApi
 # Change to the newly created project directory
 WORKDIR /app/Slamdunk.WebApi
 
-# Install Swashbuckle EntityFrameworkCore PostgreSQL package
-RUN dotnet add package Microsoft.EntityFrameworkCore.Design
-RUN dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
-RUN dotnet add package Swashbuckle.AspNetCore
+# Install required packages (compatible with .NET 8)
+RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.10
+RUN dotnet add package Microsoft.EntityFrameworkCore.Tools --version 8.0.10
+RUN dotnet add package Microsoft.EntityFrameworkCore --version 8.0.10
+RUN dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.10
+RUN dotnet add package Swashbuckle.AspNetCore --version 6.6.2
+RUN dotnet add package Microsoft.AspNetCore.SignalR
 RUN dotnet add package itext7.pdfhtml
 RUN dotnet add package itext7.bouncy-castle-adapter
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Restore packages
+RUN dotnet restore
 
 # Build the application
 RUN dotnet build
 
-# Expose the necessary port (e.g., 80 for HTTP)
+# Expose the application port
 EXPOSE 5214
 
-# Start the app
+# Start the application
 ENTRYPOINT ["dotnet", "run", "--urls", "http://0.0.0.0:5214"]

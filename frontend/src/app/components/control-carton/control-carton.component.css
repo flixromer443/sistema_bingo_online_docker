@@ -1,0 +1,180 @@
+/* CARD */
+
+:host{
+    display:block;
+}
+
+/* ===========================
+   BOLILLERO
+=========================== */
+
+.bolillero{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+
+    margin-bottom:30px;
+
+}
+
+.bola{
+
+    width:58px;
+    height:58px;
+
+    border-radius:50%;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:linear-gradient(180deg,#ffffff,#ececec);
+
+    border:3px solid #0d6efd;
+
+    color:#0d6efd;
+
+    font-size:22px;
+    font-weight:bold;
+
+    box-shadow:
+        0 6px 12px rgba(0,0,0,.20),
+        inset 0 3px 6px rgba(255,255,255,.9);
+
+    transition:.25s;
+
+}
+
+.bola:hover{
+
+    transform:scale(1.08);
+
+}
+
+.bola.ultima{
+
+    background:linear-gradient(180deg,#ff5a5a,#dc3545);
+    border-color:#dc3545;
+    color:white;
+
+    transform:scale(1.15);
+
+}
+
+/* ===========================
+   CARTÓN
+=========================== */
+
+.carton{
+
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+
+    width:100%;
+
+}
+
+.fila{
+
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    gap:6px;
+
+}
+
+.casilla{
+
+    aspect-ratio:1;
+
+    border-radius:10px;
+
+    border:2px solid #d6d6d6;
+
+    background:white;
+
+    font-size:22px;
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+}
+
+.casilla:hover:not(.vacia){
+
+    transform:scale(1.05);
+
+    border-color:#0d6efd;
+
+}
+
+.vacia{
+
+    background:#f2f2f2;
+
+    border:2px dashed #d5d5d5;
+
+    cursor:default;
+
+}
+
+.marcada{
+
+    background:#198754 !important;
+
+    color:white;
+
+    border-color:#198754;
+
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media (max-width:992px){
+
+    .casilla{
+
+        font-size:18px;
+
+    }
+
+    .bola{
+
+        width:50px;
+        height:50px;
+
+        font-size:18px;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .fila{
+        gap:4px;
+    }
+
+    .casilla{
+        font-size:15px;
+    }
+
+    .bola{
+
+        width:42px;
+        height:42px;
+        font-size:16px;
+
+    }
+
+}

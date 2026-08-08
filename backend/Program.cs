@@ -1,5 +1,7 @@
 using Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.SignalR;
+using Slamdunk.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,13 +10,16 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 // Add CORS policy to allow requests from your Angular app
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policyBuilder =>
     {
-        policyBuilder.WithOrigins("http://localhost:4200");
+        policyBuilder.WithOrigins("http://localhost:4200",
+                                  "http://localhost:4201",
+                                  "http://localhost:4202");
         policyBuilder.AllowAnyHeader();
         policyBuilder.AllowAnyMethod();
         policyBuilder.AllowCredentials();
@@ -39,5 +44,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.UseCors("AngularApp");
-
+app.MapHub<BingoHub>("/bingoHub");
 app.Run();
