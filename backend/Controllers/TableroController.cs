@@ -48,4 +48,54 @@ public class TableroController : ControllerBase
     {
         return await _context.NumerosSorteados.Where(n => n.Jugada.NumeroJugada == numeroJugada).ToListAsync();
     }
+
+
+    [HttpPost("guardarNumeroSorteado")]
+    public async Task<ActionResult> GuardarNumeroSorteado(int numeroJugada, int numero)
+    {
+        var jugada = await _context.Jugadas
+            .FirstOrDefaultAsync(
+                j => j.NumeroJugada == numeroJugada
+            );
+
+        if (jugada == null)
+        {
+            return NotFound("La jugada no existe.");
+        }
+
+        var yaExiste = await _context.NumerosSorteados
+            .AnyAsync(n =>
+                n.Jugada.Id == jugada.Id &&
+                n.Numero == numero
+            );
+
+        if (yaExiste)
+        {
+            return BadRequest(
+                "El número ya fue sorteado en esta jugada."
+            );
+        }
+
+        var numeroSorteado = new NumeroSorteado
+        {
+            Numero = numero,
+            Jugada = jugada
+        };
+
+        _context.NumerosSorteados.Add(numeroSorteado);
+
+        await _context.SaveChangesAsync();
+
+        await _hub.Clients
+            .Group($"JUGADA_{numeroJugada}")
+            .SendAsync(
+                "NuevaBolilla",
+                numero
+            );
+
+        return Ok(numeroSorteado);
+    }
+
+
+
 }

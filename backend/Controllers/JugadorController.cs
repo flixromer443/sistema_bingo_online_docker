@@ -39,4 +39,11 @@ public class JugadorController : ControllerBase
 
     }
 
+    [HttpGet("obtenerNumerosSorteadosPorJugada/{numeroJugada}")]
+    public async Task<ActionResult<List<NumeroSorteado>>> obtenerNumerosSorteadosPorJugada(int numeroJugada)
+    {
+        return await _context.NumerosSorteados
+            .Where(n => n.Jugada.NumeroJugada == numeroJugada)
+            .ToListAsync();
+    }
 }
