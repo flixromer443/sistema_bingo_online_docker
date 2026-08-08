@@ -7,10 +7,9 @@ services:
     env_file:
       - .env
     environment:
-      - API_AUTH_URL:$API_AUTH_URL
-      - API_GAME_URL:$API_GAME_URL
-      - API_ADMIN_URL:$API_ADMIN_URL
-      - API_GEOREF_URL:$API_GEOREF_URL
+      - API_TABLERO_URL:$API_TABLERO_URL
+      - API_GLOBAL_URL:$API_GLOBAL_URL
+     
     image: ${APP_NAME}-tablero-frontend
     container_name: ${APP_NAME}-tablero-frontend
 #    volumes:
@@ -42,11 +41,9 @@ services:
       - network # Conecta este servicio a la red ${APP_NAME}-network
 
 
-
-
-  frontend:
+  jugador-frontend:
     build:
-      context: frontend/.
+      context: jugador-frontend/.
       dockerfile: Dockerfile
     env_file:
       - .env
@@ -71,8 +68,7 @@ services:
     image: ${APP_NAME}-backend
     container_name: ${APP_NAME}-backend
     volumes:
-      - ./backend:/app/Slamdunk.WebApi
-      #- ./backend:/app/SISTEMA_BINGO_ONLINE
+      - ./backend:/app/sistema_bingo_online
     ports:
       - "5214:5214"
     networks:

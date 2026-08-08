@@ -16,12 +16,12 @@ namespace Slamdunk.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ControlCartonController : ControllerBase
+public class TableroController : ControllerBase
 {
     private readonly UserContext _context;
     private readonly IHubContext<BingoHub> _hub;
 
-    public ControlCartonController(UserContext context, IHubContext<BingoHub> hub)
+    public TableroController(UserContext context, IHubContext<BingoHub> hub)
     {
         _context = context;
         _hub = hub;
@@ -36,19 +36,6 @@ public class ControlCartonController : ControllerBase
                                       .ToListAsync();
     }
 
-
-    [HttpGet("obtenerCartonesPorCodigo/{codigo}")]
-    public async Task<ActionResult<List<Carton>>> obtenerCartonesPorCodigoVerficacion(string codigo)
-    {
-        Token token = await _context.Tokens.Include(t => t.Cartones)
-                                           .Where(t => t.Codigo != null &&
-                                                       t.Codigo == codigo)
-                                           .FirstAsync();
-        return token.Cartones;
-
-    }
-
-
     [HttpGet("obtenerFlagPorVariable/{variable}")]
     public async Task<ActionResult<List<Tbl1DtsVariables>>> obtenerFlagPorVariable(string variable)
     {
@@ -61,5 +48,4 @@ public class ControlCartonController : ControllerBase
     {
         return await _context.NumerosSorteados.Where(n => n.Jugada.NumeroJugada == numeroJugada).ToListAsync();
     }
-
 }

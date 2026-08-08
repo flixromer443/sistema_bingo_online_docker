@@ -8,18 +8,19 @@ import { Global } from './global';
 @Injectable({
   providedIn: 'root'
 })
-export class TableroService {
+export class GlobalService {
 
-  private apiTablero = Global.apiTablero;
+  private apiGlobal= Global.apiGlobal;
 
   constructor(private http: HttpClient) { }
 
   /**
-   * Obtiene todos los cartones de una jugada.
+   * Obtiene una variable del sistema.
+   * Ejemplo: ULTIMA_JUGADA
    */
-  obtenerCartonesPorJugada(numeroJugada: number): Observable<Carton[]> {
-    return this.http.get<Carton[]>(
-      this.apiTablero + 'obtenerCartonesPorJugada/' + numeroJugada
+  obtenerFlagPorVariable(variable: string): Observable<Tbl1DtsVariables[]> {
+    return this.http.get<Tbl1DtsVariables[]>(
+      this.apiGlobal + 'obtenerFlagPorVariable/' + variable
     );
   }
 
