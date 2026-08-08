@@ -1,1 +1,77 @@
-{"Version":1,"Hash":"UL8DDJwtVNkJTU4G7N3Rf7JWH5MGF1doUxaBoZuWP0Y=","Source":"sistema_bingo_online","BasePath":"_content/sistema_bingo_online","Mode":"Default","ManifestType":"Build","ReferencedProjectsConfiguration":[],"DiscoveryPatterns":[{"Name":"sistema_bingo_online\\wwwroot","Source":"sistema_bingo_online","ContentRoot":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\","BasePath":"_content/sistema_bingo_online","Pattern":"**"}],"Assets":[{"Identity":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\big chungus.jpg","SourceId":"sistema_bingo_online","SourceType":"Discovered","ContentRoot":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\","BasePath":"_content/sistema_bingo_online","RelativePath":"Images/big chungus#[.{fingerprint}]?.jpg","AssetKind":"All","AssetMode":"All","AssetRole":"Primary","AssetMergeBehavior":"","AssetMergeSource":"","RelatedAsset":"","AssetTraitName":"","AssetTraitValue":"","Fingerprint":"15ztqtt1it","Integrity":"JVXNXS+hknVeTXFIm/ZY2G7TI3aIVhIJ74ot99r3jCk=","CopyToOutputDirectory":"Never","CopyToPublishDirectory":"PreserveNewest","OriginalItemSpec":"wwwroot\\Images\\big chungus.jpg","FileLength":225837,"LastWriteTime":"2026-08-03T11:16:17+00:00"},{"Identity":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\Jorge Villagra.jpg","SourceId":"sistema_bingo_online","SourceType":"Discovered","ContentRoot":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\","BasePath":"_content/sistema_bingo_online","RelativePath":"Images/Jorge Villagra#[.{fingerprint}]?.jpg","AssetKind":"All","AssetMode":"All","AssetRole":"Primary","AssetMergeBehavior":"","AssetMergeSource":"","RelatedAsset":"","AssetTraitName":"","AssetTraitValue":"","Fingerprint":"7ibrcs9pjk","Integrity":"/77/aK0pJyMrvY2OopVW5LI0/jnHDu3RHR7TFzIbUS8=","CopyToOutputDirectory":"Never","CopyToPublishDirectory":"PreserveNewest","OriginalItemSpec":"wwwroot\\Images\\Jorge Villagra.jpg","FileLength":362084,"LastWriteTime":"2026-08-03T11:16:17+00:00"},{"Identity":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\jorge.jpg","SourceId":"sistema_bingo_online","SourceType":"Discovered","ContentRoot":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\","BasePath":"_content/sistema_bingo_online","RelativePath":"Images/jorge#[.{fingerprint}]?.jpg","AssetKind":"All","AssetMode":"All","AssetRole":"Primary","AssetMergeBehavior":"","AssetMergeSource":"","RelatedAsset":"","AssetTraitName":"","AssetTraitValue":"","Fingerprint":"qkci6vm5am","Integrity":"1q1qqSu6BGnETDifjpUXrS8Rcv8qGLRr9QwXDU2mPEk=","CopyToOutputDirectory":"Never","CopyToPublishDirectory":"PreserveNewest","OriginalItemSpec":"wwwroot\\Images\\jorge.jpg","FileLength":2242481,"LastWriteTime":"2026-08-03T11:16:17+00:00"}],"Endpoints":[{"Route":"Images/big chungus.15ztqtt1it.jpg","AssetFile":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\big chungus.jpg","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"225837"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\"JVXNXS+hknVeTXFIm/ZY2G7TI3aIVhIJ74ot99r3jCk=\""},{"Name":"Last-Modified","Value":"Mon, 03 Aug 2026 11:16:17 GMT"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"}],"EndpointProperties":[{"Name":"fingerprint","Value":"15ztqtt1it"},{"Name":"label","Value":"Images/big chungus.jpg"},{"Name":"integrity","Value":"sha256-JVXNXS+hknVeTXFIm/ZY2G7TI3aIVhIJ74ot99r3jCk="}]},{"Route":"Images/big chungus.jpg","AssetFile":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\big chungus.jpg","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"225837"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\"JVXNXS+hknVeTXFIm/ZY2G7TI3aIVhIJ74ot99r3jCk=\""},{"Name":"Last-Modified","Value":"Mon, 03 Aug 2026 11:16:17 GMT"},{"Name":"Cache-Control","Value":"no-cache"}],"EndpointProperties":[{"Name":"integrity","Value":"sha256-JVXNXS+hknVeTXFIm/ZY2G7TI3aIVhIJ74ot99r3jCk="}]},{"Route":"Images/Jorge Villagra.7ibrcs9pjk.jpg","AssetFile":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\Jorge Villagra.jpg","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"362084"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\"/77/aK0pJyMrvY2OopVW5LI0/jnHDu3RHR7TFzIbUS8=\""},{"Name":"Last-Modified","Value":"Mon, 03 Aug 2026 11:16:17 GMT"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"}],"EndpointProperties":[{"Name":"fingerprint","Value":"7ibrcs9pjk"},{"Name":"label","Value":"Images/Jorge Villagra.jpg"},{"Name":"integrity","Value":"sha256-/77/aK0pJyMrvY2OopVW5LI0/jnHDu3RHR7TFzIbUS8="}]},{"Route":"Images/Jorge Villagra.jpg","AssetFile":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\Jorge Villagra.jpg","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"362084"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\"/77/aK0pJyMrvY2OopVW5LI0/jnHDu3RHR7TFzIbUS8=\""},{"Name":"Last-Modified","Value":"Mon, 03 Aug 2026 11:16:17 GMT"},{"Name":"Cache-Control","Value":"no-cache"}],"EndpointProperties":[{"Name":"integrity","Value":"sha256-/77/aK0pJyMrvY2OopVW5LI0/jnHDu3RHR7TFzIbUS8="}]},{"Route":"Images/jorge.jpg","AssetFile":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\jorge.jpg","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"2242481"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\"1q1qqSu6BGnETDifjpUXrS8Rcv8qGLRr9QwXDU2mPEk=\""},{"Name":"Last-Modified","Value":"Mon, 03 Aug 2026 11:16:17 GMT"},{"Name":"Cache-Control","Value":"no-cache"}],"EndpointProperties":[{"Name":"integrity","Value":"sha256-1q1qqSu6BGnETDifjpUXrS8Rcv8qGLRr9QwXDU2mPEk="}]},{"Route":"Images/jorge.qkci6vm5am.jpg","AssetFile":"D:\\WORKSPACES\\proyecto_bingo_online\\backend\\wwwroot\\Images\\jorge.jpg","Selectors":[],"ResponseHeaders":[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Content-Length","Value":"2242481"},{"Name":"Content-Type","Value":"image/jpeg"},{"Name":"ETag","Value":"\"1q1qqSu6BGnETDifjpUXrS8Rcv8qGLRr9QwXDU2mPEk=\""},{"Name":"Last-Modified","Value":"Mon, 03 Aug 2026 11:16:17 GMT"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"}],"EndpointProperties":[{"Name":"fingerprint","Value":"qkci6vm5am"},{"Name":"label","Value":"Images/jorge.jpg"},{"Name":"integrity","Value":"sha256-1q1qqSu6BGnETDifjpUXrS8Rcv8qGLRr9QwXDU2mPEk="}]}]}
+{
+  "Version": 1,
+  "Hash": "Hjs5y4ax7L1xXJumOdHaKumkp55kMlQB5yJW2XBnc9Q=",
+  "Source": "sistema_bingo_online",
+  "BasePath": "_content/sistema_bingo_online",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "sistema_bingo_online/wwwroot",
+      "Source": "sistema_bingo_online",
+      "ContentRoot": "/app/sistema_bingo_online/wwwroot/",
+      "BasePath": "_content/sistema_bingo_online",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/app/sistema_bingo_online/wwwroot/Images/big chungus.jpg",
+      "SourceId": "sistema_bingo_online",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/sistema_bingo_online/wwwroot/",
+      "BasePath": "_content/sistema_bingo_online",
+      "RelativePath": "Images/big chungus.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/Images/big chungus.jpg"
+    },
+    {
+      "Identity": "/app/sistema_bingo_online/wwwroot/Images/Jorge Villagra.jpg",
+      "SourceId": "sistema_bingo_online",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/sistema_bingo_online/wwwroot/",
+      "BasePath": "_content/sistema_bingo_online",
+      "RelativePath": "Images/Jorge Villagra.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/Images/Jorge Villagra.jpg"
+    },
+    {
+      "Identity": "/app/sistema_bingo_online/wwwroot/Images/jorge.jpg",
+      "SourceId": "sistema_bingo_online",
+      "SourceType": "Discovered",
+      "ContentRoot": "/app/sistema_bingo_online/wwwroot/",
+      "BasePath": "_content/sistema_bingo_online",
+      "RelativePath": "Images/jorge.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/Images/jorge.jpg"
+    }
+  ]
+}
