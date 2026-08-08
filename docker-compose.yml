@@ -42,11 +42,9 @@ services:
       - network # Conecta este servicio a la red ${APP_NAME}-network
 
 
-
-
-  frontend:
+  jugador-frontend:
     build:
-      context: frontend/.
+      context: jugador-frontend/.
       dockerfile: Dockerfile
     env_file:
       - .env
