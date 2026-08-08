@@ -9,6 +9,8 @@ import {
 } from '../../models/tablero.interfaces';
 
 import { TableroService } from '../../service/tablero.service';
+import { GlobalService } from '../../service/global.service';
+
 
 @Component({
   selector: 'app-tablero',
@@ -48,7 +50,9 @@ export class TableroComponent implements OnDestroy {
   msgBingo = false;
 
   constructor(
-      private tableroService: TableroService
+      private tableroService: TableroService,
+      private globalService: GlobalService
+
   ) {}
 
   ngOnDestroy(): void {
@@ -81,7 +85,7 @@ export class TableroComponent implements OnDestroy {
 
       this.mostrarProximaJugada = false;
 
-      this.tableroService.obtenerFlagPorVariable('ULTIMA_JUGADA')
+      this.globalService.obtenerFlagPorVariable('ULTIMA_JUGADA')
         .subscribe({
             next: (variables: Tbl1DtsVariables[]) => {
                 if (variables.length === 0)

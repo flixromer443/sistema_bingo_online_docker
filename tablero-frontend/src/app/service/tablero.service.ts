@@ -10,8 +10,8 @@ import { Global } from './global';
 })
 export class TableroService {
 
-  //private apiTablero = Global.apiTablero;
-  private apiTablero = "http://localhost:5214/api/ControlCarton/";
+  private apiTablero = Global.apiTablero;
+  //private apiTablero = "http://localhost:5214/api/Tablero/";
 
   constructor(private http: HttpClient) { }
 
@@ -21,16 +21,6 @@ export class TableroService {
   obtenerCartonesPorJugada(numeroJugada: number): Observable<Carton[]> {
     return this.http.get<Carton[]>(
       this.apiTablero + 'obtenerCartonesPorJugada/' + numeroJugada
-    );
-  }
-
-  /**
-   * Obtiene una variable del sistema.
-   * Ejemplo: ULTIMA_JUGADA
-   */
-  obtenerFlagPorVariable(variable: string): Observable<Tbl1DtsVariables[]> {
-    return this.http.get<Tbl1DtsVariables[]>(
-      this.apiTablero + 'obtenerFlagPorVariable/' + variable
     );
   }
 
