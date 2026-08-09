@@ -4,9 +4,9 @@ using Slamdunk.WebApi.Models;
 
 namespace Data
 {
-    public class UserContext : DbContext
+    public class BingoDbContext : DbContext
     {
-        public UserContext(DbContextOptions<UserContext> options) : base(options)
+        public BingoDbContext(DbContextOptions<BingoDbContext> options) : base(options)
         {
 
         }

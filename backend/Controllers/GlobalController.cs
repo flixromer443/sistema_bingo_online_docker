@@ -18,10 +18,10 @@ namespace Slamdunk.Controllers;
 [Route("api/[controller]")]
 public class GlobalController : ControllerBase
 {
-    private readonly UserContext _context;
+    private readonly BingoDbContext _context;
     private readonly IHubContext<BingoHub> _hub;
 
-    public GlobalController(UserContext context, IHubContext<BingoHub> hub)
+    public GlobalController(BingoDbContext context, IHubContext<BingoHub> hub)
     {
         _context = context;
         _hub = hub;

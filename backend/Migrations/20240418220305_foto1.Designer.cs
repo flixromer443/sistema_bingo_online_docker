@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Slamdunk.WebApi.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(BingoDbContext))]
     [Migration("20240418220305_foto1")]
     partial class foto1
     {

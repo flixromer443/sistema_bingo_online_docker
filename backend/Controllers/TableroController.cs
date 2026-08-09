@@ -18,10 +18,10 @@ namespace Slamdunk.Controllers;
 [Route("api/[controller]")]
 public class TableroController : ControllerBase
 {
-    private readonly UserContext _context;
+    private readonly BingoDbContext _context;
     private readonly IHubContext<BingoHub> _hub;
 
-    public TableroController(UserContext context, IHubContext<BingoHub> hub)
+    public TableroController(BingoDbContext context, IHubContext<BingoHub> hub)
     {
         _context = context;
         _hub = hub;
@@ -91,6 +91,13 @@ public class TableroController : ControllerBase
             .SendAsync(
                 "NuevaBolilla",
                 numero
+            );
+        await _hub.Clients
+            .All
+            .SendAsync(
+                "numerosorteado",
+                numero,
+                numeroJugada
             );
 
         return Ok(numeroSorteado);

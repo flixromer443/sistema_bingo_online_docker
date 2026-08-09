@@ -18,8 +18,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AngularApp", policyBuilder =>
     {
         policyBuilder.WithOrigins("http://localhost:4200",
-                                  "http://localhost:4201",
-                                  "http://localhost:4202");
+                           "http://localhost:4201",
+                           "http://localhost:4202");
         policyBuilder.AllowAnyHeader();
         policyBuilder.AllowAnyMethod();
         policyBuilder.AllowCredentials();
@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
 
 var configuration = builder.Configuration;
 
-builder.Services.AddDbContext<UserContext>(options =>
+builder.Services.AddDbContext<BingoDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();

@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Slamdunk.WebApi.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(BingoDbContext))]
     [Migration("20260808131520_migracion2")]
     partial class migracion2
     {

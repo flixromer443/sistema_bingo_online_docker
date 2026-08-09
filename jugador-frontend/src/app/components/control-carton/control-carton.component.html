@@ -1,76 +1,126 @@
-<section class="vh-100 d-flex align-items-center">
+<div class="container">
 
-    <div class="container">
+    <div class="row justify-content-center">
 
-        <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-            <div class="col-lg-8">
+            <p-card>
 
-                <p-card>
+                <!-- ================================================= -->
+                <!-- HEADER -->
+                <!-- ================================================= -->
 
-                    <ng-template pTemplate="header">
+                <ng-template pTemplate="header">
 
-                        <div class="text-center py-3">
+                    <div class="text-center py-3">
 
-                            <h2 class="fw-bold">
-                                Cartón N° {{ numeroCarton }}
-                            </h2>
+                        <h2 class="fw-bold mb-1">
+                            Cartón N° {{ numeroCarton }}
+                        </h2>
 
-                            <small class="text-muted">
-                                Jugada N°.
-                            </small>
+                        <small class="text-muted">
+                            Jugada N° {{ numeroJugada }}
+                        </small>
 
-                        </div>
-                        <!-- BOLILLERO -->
+                    </div>
 
-                        <div class="mb-4">
-                            <div class="bolillero">
-                            
-                                <div
-                                    class="bola"
-                                    *ngFor="let bola of bolasSorteadas; let ultima = last"
-                                    [class.ultima]="ultima">
-                            
-                                    {{ bola }}
-                            
-                                </div>
-                              
+
+                    <!-- ================================================= -->
+                    <!-- BOLILLERO -->
+                    <!-- ================================================= -->
+
+                    <div class="mb-4 px-3">
+
+                        <div class="bolillero">
+
+                            <div
+                                class="bola"
+                                *ngFor="
+                                    let bola of bolasSorteadas;
+                                    let ultima = last
+                                "
+                                [class.ultima]="ultima">
+
+                                {{ bola }}
+
                             </div>
-                          
-                        </div>
-                    </ng-template>
-
-                    <!-- CARTÓN -->
-
-                    <div class="carton">
-
-                        <div
-                            class="fila"
-                            *ngFor="let fila of carton">
-
-                            <button
-                                *ngFor="let numero of fila"
-                                type="button"
-                                class="casilla"
-                                [class.vacia]="numero.valor === null"
-                                [class.marcada]="numero.marcado"
-                                (click)="marcar(numero)"
-                                [disabled]="numero.valor === null">
-
-                                {{ numero.valor ?? '' }}
-
-                            </button>
 
                         </div>
 
                     </div>
 
-                </p-card>
+                </ng-template>
 
-            </div>
+
+                <!-- ================================================= -->
+                <!-- CARTÓN -->
+                <!-- ================================================= -->
+
+                <div class="carton">
+
+                    <div
+                        class="fila"
+                        *ngFor="let fila of carton">
+
+                        <button
+                            *ngFor="let numero of fila"
+                            type="button"
+                            class="casilla"
+
+                            [class.vacia]="
+                                numero.valor === null
+                            "
+
+                            [class.marcada]="
+                                numero.marcado
+                            "
+
+                            (click)="marcar(numero)"
+
+                            [disabled]="
+                                numero.valor === null
+                            ">
+
+                            {{ numero.valor ?? '' }}
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================================================= -->
+                <!-- BOTONES -->
+                <!-- ================================================= -->
+
+                <div class="acciones mt-4 text-center">
+
+                    <button
+                        type="button"
+                        class="btn btn-warning me-2"
+                        (click)="cantarLinea()">
+
+                        ¡LÍNEA!
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-success"
+                        (click)="cantarBingo()">
+
+                        ¡BINGO!
+
+                    </button>
+
+                </div>
+
+            </p-card>
 
         </div>
 
     </div>
 
-</section>
+</div>

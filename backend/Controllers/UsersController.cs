@@ -14,9 +14,9 @@ namespace Slamdunk.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly UserContext _context;
+    private readonly BingoDbContext _context;
 
-    public UsersController(UserContext context)
+    public UsersController(BingoDbContext context)
     {
         _context = context;
     }

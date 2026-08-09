@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Slamdunk.WebApi.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(BingoDbContext))]
     [Migration("20260806135614_InicialPostgres")]
     partial class InicialPostgres
     {

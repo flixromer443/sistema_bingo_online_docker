@@ -1,180 +1,241 @@
-/* CARD */
+/* =========================================================
+   CONTENEDOR
+   ========================================================= */
 
-:host{
-    display:block;
+.container {
+    padding-top: 30px;
+    padding-bottom: 30px;
 }
 
-/* ===========================
-   BOLILLERO
-=========================== */
 
-.bolillero{
+/* =========================================================
+   CARTÓN
+   ========================================================= */
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:12px;
+.carton {
+    width: 100%;
+    max-width: 650px;
 
-    margin-bottom:30px;
+    margin: 0 auto;
 
+    border: 2px solid #222;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    background-color: #ffffff;
 }
 
-.bola{
 
-    width:58px;
-    height:58px;
+/* =========================================================
+   FILA
+   ========================================================= */
 
-    border-radius:50%;
+.fila {
+    display: grid;
 
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    grid-template-columns:
+        repeat(9, 1fr);
 
-    background:linear-gradient(180deg,#ffffff,#ececec);
+    width: 100%;
+}
 
-    border:3px solid #0d6efd;
 
-    color:#0d6efd;
+/* =========================================================
+   CASILLA
+   ========================================================= */
 
-    font-size:22px;
-    font-weight:bold;
+.casilla {
+    aspect-ratio: 1 / 1;
+
+    width: 100%;
+
+    border: 1px solid #222;
+
+    background-color: #ffffff;
+
+    color: #111;
+
+    font-size: 22px;
+
+    font-weight: bold;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+}
+
+
+/* =========================================================
+   HOVER
+   ========================================================= */
+
+.casilla:not(:disabled):hover {
+    background-color: #eeeeee;
+
+    transform: scale(0.97);
+}
+
+
+/* =========================================================
+   CASILLA VACÍA
+   ========================================================= */
+
+.casilla.vacia {
+    background-color: #f5f5f5;
+
+    cursor: default;
+}
+
+
+/* =========================================================
+   NÚMERO MARCADO
+   ========================================================= */
+
+.casilla.marcada {
+    background-color: #00c853 !important;
+
+    color: #ffffff !important;
+
+    border-color: #00a844 !important;
 
     box-shadow:
-        0 6px 12px rgba(0,0,0,.20),
-        inset 0 3px 6px rgba(255,255,255,.9);
+        inset 0 0 0 2px #ffffff;
 
-    transition:.25s;
-
+    transform: scale(0.95);
 }
 
-.bola:hover{
 
-    transform:scale(1.08);
+/* =========================================================
+   BOLILLERO
+   ========================================================= */
 
+.bolillero {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    min-height: 65px;
+
+    padding: 10px;
 }
 
-.bola.ultima{
 
-    background:linear-gradient(180deg,#ff5a5a,#dc3545);
-    border-color:#dc3545;
-    color:white;
+/* =========================================================
+   BOLA
+   ========================================================= */
 
-    transform:scale(1.15);
+.bola {
+    width: 45px;
 
+    height: 45px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background-color: #eeeeee;
+
+    color: #111111;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    border: 2px solid #cccccc;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
 }
 
-/* ===========================
-   CARTÓN
-=========================== */
 
-.carton{
+/* =========================================================
+   ÚLTIMA BOLA
+   ========================================================= */
 
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+.bola.ultima {
+    background-color: #ff9800;
 
-    width:100%;
+    color: #ffffff;
 
+    border-color: #e68900;
+
+    transform: scale(1.15);
+
+    box-shadow:
+        0 0 10px rgba(255, 152, 0, 0.6);
 }
 
-.fila{
 
-    display:grid;
-    grid-template-columns:repeat(9,1fr);
-    gap:6px;
+/* =========================================================
+   ACCIONES
+   ========================================================= */
 
+.acciones {
+    padding-bottom: 10px;
 }
 
-.casilla{
 
-    aspect-ratio:1;
-
-    border-radius:10px;
-
-    border:2px solid #d6d6d6;
-
-    background:white;
-
-    font-size:22px;
-    font-weight:bold;
-
-    cursor:pointer;
-
-    transition:.25s;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-}
-
-.casilla:hover:not(.vacia){
-
-    transform:scale(1.05);
-
-    border-color:#0d6efd;
-
-}
-
-.vacia{
-
-    background:#f2f2f2;
-
-    border:2px dashed #d5d5d5;
-
-    cursor:default;
-
-}
-
-.marcada{
-
-    background:#198754 !important;
-
-    color:white;
-
-    border-color:#198754;
-
-}
-
-/* ===========================
+/* =========================================================
    RESPONSIVE
-=========================== */
+   ========================================================= */
 
-@media (max-width:992px){
+@media (max-width: 768px) {
 
-    .casilla{
-
-        font-size:18px;
-
+    .casilla {
+        font-size: 17px;
     }
 
-    .bola{
+    .bola {
+        width: 38px;
 
-        width:50px;
-        height:50px;
+        height: 38px;
 
-        font-size:18px;
+        font-size: 15px;
     }
 
 }
 
-@media (max-width:768px){
 
-    .fila{
-        gap:4px;
+@media (max-width: 480px) {
+
+    .container {
+        padding-left: 5px;
+
+        padding-right: 5px;
     }
 
-    .casilla{
-        font-size:15px;
+    .casilla {
+        font-size: 14px;
     }
 
-    .bola{
+    .bola {
+        width: 32px;
 
-        width:42px;
-        height:42px;
-        font-size:16px;
+        height: 32px;
 
+        font-size: 13px;
     }
 
 }

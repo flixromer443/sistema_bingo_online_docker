@@ -9,7 +9,7 @@ services:
     environment:
       - API_TABLERO_URL:$API_TABLERO_URL
       - API_GLOBAL_URL:$API_GLOBAL_URL
-     
+
     image: ${APP_NAME}-tablero-frontend
     container_name: ${APP_NAME}-tablero-frontend
 #    volumes:
@@ -48,10 +48,8 @@ services:
     env_file:
       - .env
     environment:
-      - API_AUTH_URL:$API_AUTH_URL
-      - API_GAME_URL:$API_GAME_URL
-      - API_ADMIN_URL:$API_ADMIN_URL
-      - API_GEOREF_URL:$API_GEOREF_URL
+      - API_JUGADOR_URL:$API_JUGADOR_URL
+      - API_GLOBAL_URL:$API_GLOBAL_URL
     image: ${APP_NAME}-frontend
     container_name: ${APP_NAME}-frontend
 #    volumes:
