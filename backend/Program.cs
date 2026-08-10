@@ -13,23 +13,24 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 // Add CORS policy to allow requests from your Angular app
+var configuration = builder.Configuration;
+
+var frontendAdminUrl = builder.Configuration["FRONTEND_ADMIN_URL"];
+var frontendJugadorUrl = builder.Configuration["FRONTEND_JUGADOR_URL"];
+var frontendTableroUrl = builder.Configuration["FRONTEND_TABLERO_URL"];
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policyBuilder =>
     {
-        policyBuilder.WithOrigins("http://localhost:4200",
-                           "http://localhost:4201",
-                           "http://localhost:4202",
-                           "http://preguntados.ddns.net:4200",
-                           "http://preguntados.ddns.net:4201",
-                           "http://preguntados.ddns.net:4202");
+        policyBuilder.WithOrigins(frontendAdminUrl, frontendJugadorUrl, frontendTableroUrl);
         policyBuilder.AllowAnyHeader();
         policyBuilder.AllowAnyMethod();
         policyBuilder.AllowCredentials();
     });
 });
 
-var configuration = builder.Configuration;
 
 builder.Services.AddDbContext<BingoDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
