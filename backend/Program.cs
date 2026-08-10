@@ -19,6 +19,17 @@ var frontendAdminUrl = builder.Configuration["FRONTEND_ADMIN_URL"];
 var frontendJugadorUrl = builder.Configuration["FRONTEND_JUGADOR_URL"];
 var frontendTableroUrl = builder.Configuration["FRONTEND_TABLERO_URL"];
 
+Console.WriteLine(
+    $"FRONTEND_ADMIN_URL: {frontendAdminUrl}"
+);
+
+Console.WriteLine(
+    $"FRONTEND_JUGADOR_URL: {frontendJugadorUrl}"
+);
+
+Console.WriteLine(
+    $"FRONTEND_TABLERO_URL: {frontendTableroUrl}"
+);
 
 builder.Services.AddCors(options =>
 {
