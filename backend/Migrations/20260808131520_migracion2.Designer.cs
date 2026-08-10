@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Slamdunk.WebApi.Migrations
 {
     [DbContext(typeof(BingoDbContext))]
-    [Migration("20260806135614_InicialPostgres")]
-    partial class InicialPostgres
+    [Migration("20260808131520_migracion2")]
+    partial class migracion2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -195,6 +195,27 @@ namespace Slamdunk.WebApi.Migrations
                     b.ToTable("NumerosCarton");
                 });
 
+            modelBuilder.Entity("Slamdunk.WebApi.Models.NumeroSorteado", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("JugadaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JugadaId");
+
+                    b.ToTable("NumerosSorteados");
+                });
+
             modelBuilder.Entity("Slamdunk.WebApi.Models.Premio", b =>
                 {
                     b.Property<int>("Id")
@@ -310,6 +331,17 @@ namespace Slamdunk.WebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Carton");
+                });
+
+            modelBuilder.Entity("Slamdunk.WebApi.Models.NumeroSorteado", b =>
+                {
+                    b.HasOne("Slamdunk.WebApi.Models.Jugada", "Jugada")
+                        .WithMany()
+                        .HasForeignKey("JugadaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Jugada");
                 });
 
             modelBuilder.Entity("Slamdunk.WebApi.Models.Premio", b =>

@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Slamdunk.WebApi.Migrations
 {
-    [DbContext(typeof(UserContext))]
+    [DbContext(typeof(BingoDbContext))]
     partial class UserContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

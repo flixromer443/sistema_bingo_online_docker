@@ -141,26 +141,45 @@ export class TableroComponent implements OnDestroy {
 
   sortearNumero(){
 
-      if(this.numerosSorteados.size >= 90){
-
-          this.detener();
-
-          return;
-
-      }
-
-      const numero = this.obtenerNumeroAleatorio();
-
-      this.ultimoNumero = numero;
-
-      this.numerosSorteados.add(numero);
-
-      this.marcarNumeroEnCartones(numero);
-
-      this.verificarLinea();
-
-      this.verificarBingo();
-
+    if(this.numerosSorteados.size >= 90){
+      this.detener();
+      return;
+    }
+  
+    const numero = this.obtenerNumeroAleatorio();
+  
+    this.tableroService
+      .guardarNumeroSorteado(
+        this.numeroJugada,
+        numero
+      )
+      .subscribe({
+      
+        next: () => {
+        
+          // Recién acá confirmamos el sorteo
+          this.ultimoNumero = numero;
+        
+          this.numerosSorteados.add(numero);
+        
+          this.marcarNumeroEnCartones(numero);
+        
+          this.verificarLinea();
+        
+          this.verificarBingo();
+        
+        },
+      
+        error: err => {
+        
+          console.error(
+            'No se pudo guardar el número sorteado',
+            err
+          );
+        
+        }
+      
+      });
   }
 
   marcarNumeroEnCartones(numero: number): void {

@@ -1,144 +1,1575 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  NgZone
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 
+import { JugadorService } from '../../service/jugador.service';
+import { JugadorSignalrService } from '../../service/jugador-signalr.service';
+
+
+// =========================================================
+// CASILLA
+// =========================================================
+
 export interface Casilla {
+
   valor: number | null;
+
   marcado: boolean;
+
 }
 
+
+// =========================================================
+// NÚMERO DEL CARTÓN
+// =========================================================
+
+export interface NumeroCarton {
+
+  numero: number;
+
+  nLinea: number;
+
+}
+
+
+// =========================================================
+// CARTÓN
+// =========================================================
+
+export interface Carton {
+
+  id:number;
+
+  numeroJugada:number;
+
+  numeros:NumeroCarton[];
+
+}
+
+
+// =========================================================
+// COMPONENTE
+// =========================================================
+
 @Component({
-  selector: 'app-control-carton',
-  standalone: true,
-  imports: [
+
+  selector:'app-control-carton',
+
+  standalone:true,
+
+  imports:[
     CommonModule,
     CardModule
   ],
-  templateUrl: './control-carton.component.html',
-  styleUrls: ['./control-carton.component.css']
+
+  templateUrl:'./control-carton.component.html',
+
+  styleUrls:[
+    './control-carton.component.css'
+  ]
+
 })
-export class ControlCartonComponent {
 
-  numeroJugada = 6;
-  numeroCarton = 1258;
 
-  // Bolillas sorteadas (la última es la más reciente)
-  bolasSorteadas: number[] = [
-    7,
-    15,
-    28,
-    43,
-    66,
-    81
-  ];
+export class ControlCartonComponent
+implements OnInit, OnDestroy {
 
-  // Cartón (3 filas x 9 columnas = 15 números)
-  carton: Casilla[][] = [
 
-    [
-      { valor: 4, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 23, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 41, marcado: false },
-      { valor: 58, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 79, marcado: false },
-      { valor: null, marcado: false }
-    ],
+// =========================================================
+// DATOS ACTUALES
+// =========================================================
 
-    [
-      { valor: null, marcado: false },
-      { valor: 12, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 34, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 56, marcado: false },
-      { valor: 67, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 88, marcado: false }
-    ],
 
-    [
-      { valor: 8, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 27, marcado: false },
-      { valor: 39, marcado: false },
-      { valor: null, marcado: false },
-      { valor: null, marcado: false },
-      { valor: 63, marcado: false },
-      { valor: 74, marcado: false },
-      { valor: null, marcado: false }
-    ]
+numeroJugada:number = 0;
 
-  ];
 
-  marcar(casilla: Casilla): void {
+numeroCarton:number = 0;
 
-    if (casilla.valor === null) {
-      return;
-    }
 
-    casilla.marcado = !casilla.marcado;
+
+// =========================================================
+// JUGADAS
+// =========================================================
+
+
+jugadasDisponibles:number[] = [
+
+  1,
+  2,
+  3,
+  4,
+  5,
+  6
+
+];
+
+
+
+cartonesJugador:Carton[] = [];
+
+
+
+// =========================================================
+// BOLILLAS
+// =========================================================
+
+
+numerosSorteadosHistoricos:number[] = [];
+
+
+bolasSorteadas:number[] = [];
+
+
+
+// =========================================================
+// CARTÓN VISUAL 3 X 9
+// =========================================================
+
+
+carton:Casilla[][] = [];
+
+
+
+// =========================================================
+// CONSTRUCTOR
+// =========================================================
+
+
+constructor(
+
+  private jugadorService:JugadorService,
+
+  private jugadorSignalrService:JugadorSignalrService,
+
+  private ngZone:NgZone
+
+){}
+
+
+
+// =========================================================
+// INIT
+// =========================================================
+
+
+ngOnInit():void {
+
+
+  console.log(
+    "======================================"
+  );
+
+
+  console.log(
+    "CONTROL CARTÓN INICIADO"
+  );
+
+
+  console.log(
+    "======================================"
+  );
+
+
+
+  this.cargarCartonesJugador();
+
+
+}
+
+
+
+// =========================================================
+// DESTROY
+// =========================================================
+
+
+ngOnDestroy():void {
+
+
+
+  console.log(
+    "Destruyendo componente..."
+  );
+
+
+
+  this.jugadorSignalrService
+  .desconectar()
+
+  .catch(error=>{
+
+
+    console.error(
+      "Error desconectando SignalR",
+      error
+    );
+
+
+  });
+
+
+
+}
+
+
+
+// =========================================================
+// CARGAR CARTONES DEL JUGADOR
+// =========================================================
+
+
+private cargarCartonesJugador():void {
+
+
+  const datos =
+
+    sessionStorage.getItem(
+      "cartones_jugador"
+    );
+
+
+
+  if(!datos){
+
+
+    console.error(
+      "❌ No existen cartones"
+    );
+
+
+    return;
 
   }
 
-  agregarBolilla(numero: number): void {
 
-    if (numero < 1 || numero > 90) {
+
+  try {
+
+
+    this.cartonesJugador =
+
+      JSON.parse(datos);
+
+
+
+    if(
+
+      !this.cartonesJugador ||
+
+      this.cartonesJugador.length === 0
+
+    ){
+
+
+      console.error(
+        "❌ Lista vacía de cartones"
+      );
+
+
       return;
+
     }
 
-    if (this.bolasSorteadas.includes(numero)) {
-      return;
-    }
 
-    this.bolasSorteadas.push(numero);
 
-    // Mantener visibles solo las últimas 15 bolillas
-    if (this.bolasSorteadas.length > 15) {
-      this.bolasSorteadas.shift();
-    }
+    console.log(
+      "Cartones jugador:",
+      this.cartonesJugador
+    );
 
-    // Marcar automáticamente el número si está en el cartón
-    this.carton.forEach(fila => {
-      fila.forEach(casilla => {
-        if (casilla.valor === numero) {
-          casilla.marcado = true;
+
+
+    // CARGA INICIAL JUGADA 1
+
+
+    this.cargarJugada(
+      1
+    );
+
+
+
+    // CONECTAR SIGNALR
+
+
+    this.conectarSignalR();
+
+
+
+  }
+
+  catch(error){
+
+
+    console.error(
+      "Error leyendo cartones",
+      error
+    );
+
+
+  }
+
+
+}
+
+
+// =========================================================
+// CARGAR CARTÓN DE UNA JUGADA
+// =========================================================
+
+
+private cargarJugada(
+
+  numeroJugada:number
+
+):void {
+
+
+
+  const cartonEncontrado =
+
+    this.cartonesJugador.find(
+
+      c =>
+
+      Number(c.numeroJugada)
+
+      ===
+
+      Number(numeroJugada)
+
+    );
+
+
+
+  if(!cartonEncontrado){
+
+
+    console.error(
+
+      "❌ No existe cartón para jugada",
+
+      numeroJugada
+
+    );
+
+
+    return;
+
+  }
+
+
+
+  console.log(
+    "Cargando cartón:",
+    cartonEncontrado
+  );
+
+
+
+  this.numeroJugada =
+
+    numeroJugada;
+
+
+
+  this.numeroCarton =
+
+    Number(
+      cartonEncontrado.id
+    );
+
+
+
+  // limpiar estado anterior
+
+
+  this.numerosSorteadosHistoricos = [];
+
+
+  this.bolasSorteadas = [];
+
+
+
+  // construir nuevo cartón
+
+
+  this.construirCarton(
+
+    cartonEncontrado
+
+  );
+
+
+
+  // traer histórico de esa jugada
+
+
+  this.cargarNumerosSorteados();
+
+
+
+}
+// =========================================================
+// CONECTAR SIGNALR
+// =========================================================
+
+private conectarSignalR():void {
+
+
+  console.log(
+    "Intentando conectar SignalR..."
+  );
+
+
+
+  this.jugadorSignalrService
+  .conectar()
+
+  .then(()=>{
+
+
+    console.log(
+      "🟢 SignalR conectado"
+    );
+
+
+
+    this.jugadorSignalrService
+    .escucharNumeroSorteado(
+
+      (
+        numero:number,
+        numeroJugada:number
+
+      )=>{
+
+
+        this.ngZone.run(()=>{
+
+
+
+          const numeroRecibido =
+            Number(numero);
+
+
+
+          const jugadaRecibida =
+            Number(numeroJugada);
+
+
+
+          if(
+
+            isNaN(numeroRecibido)
+
+            ||
+
+            numeroRecibido < 1
+
+            ||
+
+            numeroRecibido > 90
+
+          ){
+
+            return;
+
+          }
+
+
+
+          /*
+          =================================================
+          IMPORTANTE
+
+          SOLO MARCAR LA JUGADA ACTIVA
+          =================================================
+          */
+
+
+          if(
+
+            jugadaRecibida !==
+
+            this.numeroJugada
+
+          ){
+
+            console.log(
+
+              "Número de otra jugada:",
+
+              jugadaRecibida
+
+            );
+
+
+            return;
+
+          }
+
+
+
+          this.agregarBolilla(
+
+            numeroRecibido
+
+          );
+
+
+
+        });
+
+
+
+      }
+
+
+    );
+
+
+
+  })
+
+
+  .catch(error=>{
+
+
+    console.error(
+
+      "❌ Error SignalR",
+
+      error
+
+    );
+
+
+  });
+
+
+
+}
+
+
+
+// =========================================================
+// CARGAR HISTÓRICO DE JUGADA
+// =========================================================
+
+
+private cargarNumerosSorteados():void {
+
+
+
+  if(
+
+    this.numeroJugada <= 0
+
+  ){
+
+    return;
+
+  }
+
+
+
+  this.jugadorService
+
+  .obtenerNumerosSorteadosPorJugada(
+
+    this.numeroJugada
+
+  )
+
+  .subscribe({
+
+
+
+    next:(response:any)=>{
+
+
+
+      let numeros:any[] = [];
+
+
+
+      if(
+
+        Array.isArray(response)
+
+      ){
+
+        numeros=response;
+
+      }
+
+      else if(
+
+        Array.isArray(response?.data)
+
+      ){
+
+        numeros=response.data;
+
+      }
+
+      else if(
+
+        Array.isArray(response?.data?.numeros)
+
+      ){
+
+        numeros=response.data.numeros;
+
+      }
+
+
+
+      numeros.forEach(
+
+        n=>{
+
+
+
+          const numero =
+
+          Number(
+
+            n?.numero ??
+
+            n?.Numero ??
+
+            n
+
+          );
+
+
+
+          if(
+
+            numero >=1
+
+            &&
+
+            numero <=90
+
+          ){
+
+
+            this.agregarBolilla(
+
+              numero
+
+            );
+
+
+          }
+
+
+
         }
-      });
-    });
+
+
+      );
+
+
+
+    },
+
+
+    error:(err)=>{
+
+
+      console.error(
+
+        "Error histórico",
+
+        err
+
+      );
+
+
+    }
+
+
+
+  });
+
+
+
+}
+
+
+
+// =========================================================
+// CONSTRUIR CARTÓN 3 x 9
+// =========================================================
+
+
+private construirCarton(
+
+  carton:Carton
+
+):void {
+
+
+
+  this.carton =
+
+  Array.from(
+
+    {
+
+      length:3
+
+    },
+
+
+    ()=>
+
+
+    Array.from(
+
+      {
+
+        length:9
+
+      },
+
+
+      ()=>({
+
+
+        valor:null,
+
+
+        marcado:false
+
+
+      })
+
+
+    )
+
+
+  );
+
+
+
+
+  if(
+
+    !carton.numeros
+
+    ||
+
+    !Array.isArray(carton.numeros)
+
+  ){
+
+    console.error(
+
+      "Cartón sin números"
+
+    );
+
+
+    return;
 
   }
 
-  limpiarCarton(): void {
 
-    this.carton.forEach(fila => {
-      fila.forEach(casilla => {
-        casilla.marcado = false;
-      });
-    });
+
+
+
+  carton.numeros.forEach(
+
+    numeroCarton=>{
+
+
+
+      const numero =
+
+      Number(
+
+        numeroCarton.numero
+
+      );
+
+
+
+      const fila =
+
+      Number(
+
+        numeroCarton.nLinea
+
+      )
+
+      -1;
+
+
+
+      if(
+
+        fila <0
+
+        ||
+
+        fila>2
+
+      ){
+
+        return;
+
+      }
+
+
+
+      const columna =
+
+      this.obtenerColumna(
+
+        numero
+
+      );
+
+
+
+      if(
+
+        columna <0
+
+        ||
+
+        columna>8
+
+      ){
+
+        return;
+
+      }
+
+
+
+
+
+      if(
+
+        this.carton[fila][columna].valor
+
+        ===
+
+        null
+
+      ){
+
+
+
+        this.carton[fila][columna]={
+
+
+          valor:numero,
+
+
+          marcado:false
+
+
+
+        };
+
+
+
+      }
+
+      else{
+
+
+
+        const alternativa =
+
+        this.buscarColumnaDisponible(
+
+          numero,
+
+          fila
+
+        );
+
+
+
+        if(
+
+          alternativa>=0
+
+        ){
+
+
+
+          this.carton[fila][alternativa]={
+
+
+            valor:numero,
+
+
+            marcado:false
+
+
+          };
+
+
+
+        }
+
+
+
+      }
+
+
+
+    }
+
+
+  );
+
+
+
+  console.log(
+
+    "Cartón construido:",
+
+    this.carton
+
+  );
+
+
+
+}
+
+
+
+// =========================================================
+// BUSCAR COLUMNA DISPONIBLE
+// =========================================================
+
+
+private buscarColumnaDisponible(
+
+  numero:number,
+
+  fila:number
+
+):number {
+
+
+
+  const columna =
+
+  this.obtenerColumna(
+
+    numero
+
+  );
+
+
+
+  if(
+
+    columna <0
+
+  ){
+
+    return -1;
 
   }
 
-  reiniciarBolillero(): void {
 
-    this.bolasSorteadas = [];
 
-    this.limpiarCarton();
+  for(
+
+    let i=0;
+
+    i<9;
+
+    i++
+
+  ){
+
+
+    if(
+
+      this.carton[fila][i].valor
+
+      ===
+
+      null
+
+    ){
+
+      return i;
+
+    }
+
 
   }
 
-  cantarLinea(): void {
 
-    alert('¡Línea!');
+
+  return -1;
+
+
+}
+
+
+
+// =========================================================
+// OBTENER COLUMNA DEL BINGO
+// =========================================================
+
+
+private obtenerColumna(
+
+ numero:number
+
+):number {
+
+
+
+  if(numero<=9)
+    return 0;
+
+
+  if(numero<=19)
+    return 1;
+
+
+  if(numero<=29)
+    return 2;
+
+
+  if(numero<=39)
+    return 3;
+
+
+  if(numero<=49)
+    return 4;
+
+
+  if(numero<=59)
+    return 5;
+
+
+  if(numero<=69)
+    return 6;
+
+
+  if(numero<=79)
+    return 7;
+
+
+  if(numero<=90)
+    return 8;
+
+
+
+  return -1;
+
+
+}
+
+// =========================================================
+// AGREGAR BOLILLA
+// =========================================================
+
+agregarBolilla(
+  numero:number
+):void {
+
+
+  const numeroNormalizado =
+    Number(numero);
+
+
+
+  if(
+
+    isNaN(numeroNormalizado)
+
+    ||
+
+    numeroNormalizado < 1
+
+    ||
+
+    numeroNormalizado > 90
+
+  ){
+
+    return;
 
   }
 
-  cantarBingo(): void {
 
-    alert('¡Bingo!');
+
+
+
+  // EVITAR DUPLICADOS
+
+
+  if(
+
+    this.numerosSorteadosHistoricos
+    .includes(numeroNormalizado)
+
+  ){
+
+
+    this.marcarNumeroEnCarton(
+
+      numeroNormalizado
+
+    );
+
+
+    return;
 
   }
+
+
+
+
+
+  // GUARDAR HISTÓRICO COMPLETO
+
+
+  this.numerosSorteadosHistoricos.push(
+
+    numeroNormalizado
+
+  );
+
+
+
+
+
+  // MOSTRAR ÚLTIMAS 15
+
+
+  this.bolasSorteadas =
+
+  [
+
+    ...this.numerosSorteadosHistoricos
+    .slice(-15)
+
+  ];
+
+
+
+
+
+  // MARCAR CARTÓN
+
+
+  this.marcarNumeroEnCarton(
+
+    numeroNormalizado
+
+  );
+
+
+
+}
+
+
+
+// =========================================================
+// MARCAR NÚMERO EN CARTÓN
+// =========================================================
+
+private marcarNumeroEnCarton(
+
+  numero:number
+
+):void {
+
+
+
+  this.carton.forEach(
+
+    fila=>{
+
+
+      fila.forEach(
+
+        casilla=>{
+
+
+          if(
+
+            casilla.valor !== null
+
+            &&
+
+            Number(casilla.valor)
+
+            ===
+
+            Number(numero)
+
+          ){
+
+
+
+            casilla.marcado = true;
+
+
+
+          }
+
+
+
+        }
+
+
+      );
+
+
+    }
+
+
+  );
+
+
+
+  // refrescar referencia Angular
+
+
+  this.carton =
+
+  this.carton.map(
+
+    fila=>
+
+    fila.map(
+
+      casilla=>({
+
+
+        valor:
+
+        casilla.valor,
+
+
+        marcado:
+
+        casilla.marcado
+
+
+
+      })
+
+
+    )
+
+
+  );
+
+
+
+}
+
+
+
+
+
+// =========================================================
+// MARCAR MANUALMENTE
+// =========================================================
+
+
+marcar(
+
+  casilla:Casilla
+
+):void {
+
+
+
+  if(
+
+    casilla.valor === null
+
+  ){
+
+    return;
+
+  }
+
+
+
+  casilla.marcado =
+
+    !casilla.marcado;
+
+
+
+
+
+  this.carton =
+
+  this.carton.map(
+
+    fila=>
+
+    fila.map(
+
+      c=>({
+
+
+        valor:c.valor,
+
+
+        marcado:c.marcado
+
+
+
+      })
+
+
+    )
+
+
+  );
+
+
+
+}
+
+
+
+// =========================================================
+// LIMPIAR MARCAS DEL CARTÓN
+// =========================================================
+
+
+limpiarCarton():void {
+
+
+
+  this.carton.forEach(
+
+    fila=>{
+
+
+      fila.forEach(
+
+        casilla=>{
+
+
+          casilla.marcado = false;
+
+
+
+        }
+
+
+      );
+
+
+    }
+
+
+  );
+
+
+
+  this.carton =
+
+  this.carton.map(
+
+    fila=>
+
+    fila.map(
+
+      casilla=>({
+
+
+        valor:
+
+        casilla.valor,
+
+
+        marcado:
+
+        casilla.marcado
+
+
+
+      })
+
+
+    )
+
+
+  );
+
+
+
+}
+
+
+
+
+// =========================================================
+// REINICIAR BOLILLERO
+// =========================================================
+
+
+reiniciarBolillero():void {
+
+
+  this.bolasSorteadas = [];
+
+
+  this.numerosSorteadosHistoricos = [];
+
+
+  this.limpiarCarton();
+
+
+}
+
+
+
+// =========================================================
+// CANTAR LÍNEA
+// =========================================================
+
+
+cantarLinea():void {
+
+
+  alert(
+
+    "¡LÍNEA!"
+
+  );
+
+
+}
+
+
+
+
+
+// =========================================================
+// CANTAR BINGO
+// =========================================================
+
+
+cantarBingo():void {
+
+
+  alert(
+
+    "¡BINGO!"
+
+  );
+
+
+}
+
+cambiarJugada(jugada:number):void {
+
+
+  const datos =
+    sessionStorage.getItem(
+      'cartones_jugador'
+    );
+
+
+  if(!datos){
+
+    console.error(
+      "No existen cartones"
+    );
+
+    return;
+
+  }
+
+
+
+  const cartones:Carton[] =
+    JSON.parse(datos);
+
+
+
+  const cartonJugada =
+    cartones.find(
+      c =>
+      Number(c.numeroJugada) === Number(jugada)
+    );
+
+
+
+  if(!cartonJugada){
+
+    console.error(
+      "No existe cartón para jugada",
+      jugada
+    );
+
+    return;
+
+  }
+
+
+
+  console.log(
+    "Cambiando a jugada:",
+    jugada
+  );
+
+
+
+  this.numeroJugada =
+    jugada;
+
+
+  this.numeroCarton =
+    cartonJugada.id;
+
+
+
+  // limpiar marcas anteriores
+
+  this.reiniciarBolillero();
+
+
+
+  // construir nuevo cartón
+
+  this.construirCarton(
+    cartonJugada
+  );
+
+
+
+  // cargar bolas de esa jugada
+
+  this.cargarNumerosSorteados();
+
+
+
+}
+
 
 }
