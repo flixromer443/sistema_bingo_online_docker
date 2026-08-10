@@ -67,7 +67,7 @@ services:
     env_file:
       - .env
     environment:
-      - FRONTEND_JUGADOR_URL_:$FRONTEND_JUGADOR_URL
+      - FRONTEND_JUGADOR_URL:$FRONTEND_JUGADOR_URL
       - FRONTEND_ADMIN_URL:$FRONTEND_ADMIN_URL
       - FRONTEND_TABLERO_URL:$FRONTEND_TABLERO_URL  
     image: ${APP_NAME}-backend
