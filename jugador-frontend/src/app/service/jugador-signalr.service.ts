@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Global } from './global';
 
 import {
   HubConnection,
@@ -14,7 +15,7 @@ export class JugadorSignalrService {
 
 
   private hubConnection!: HubConnection;
-
+  private bingoHub = Global.bingoHub
 
 
   constructor() {}
@@ -32,9 +33,7 @@ export class JugadorSignalrService {
 
       new HubConnectionBuilder()
 
-        .withUrl(
-          'http://localhost:5214/bingoHub'
-        )
+        .withUrl(this.bingoHub)
 
         .withAutomaticReconnect()
 

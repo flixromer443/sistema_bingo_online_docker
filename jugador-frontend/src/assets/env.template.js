@@ -1,4 +1,5 @@
 window.__env = {
   API_JUGADOR_URL: "$API_JUGADOR_URL",
   API_GLOBAL_URL: "$API_GLOBAL_URL",
+  BINGO_HUB_URL: "$BINGO_HUB_URL",
 };

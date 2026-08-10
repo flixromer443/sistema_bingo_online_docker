@@ -19,7 +19,10 @@ builder.Services.AddCors(options =>
     {
         policyBuilder.WithOrigins("http://localhost:4200",
                            "http://localhost:4201",
-                           "http://localhost:4202");
+                           "http://localhost:4202",
+                           "http://preguntados.ddns.net:4200",
+                           "http://preguntados.ddns.net:4201",
+                           "http://preguntados.ddns.net:4202");
         policyBuilder.AllowAnyHeader();
         policyBuilder.AllowAnyMethod();
         policyBuilder.AllowCredentials();
