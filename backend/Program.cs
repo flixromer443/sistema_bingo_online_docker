@@ -1,6 +1,7 @@
 using Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Slamdunk.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,17 +20,46 @@ var frontendAdminUrl = builder.Configuration["FRONTEND_ADMIN_URL"];
 var frontendJugadorUrl = builder.Configuration["FRONTEND_JUGADOR_URL"];
 var frontendTableroUrl = builder.Configuration["FRONTEND_TABLERO_URL"];
 
-Console.WriteLine(
-    $"FRONTEND_ADMIN_URL: {frontendAdminUrl}"
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+var app = builder.Build();
+
+var logger = app.Logger;
+
+logger.LogInformation("======================================");
+logger.LogInformation("INICIANDO BACKEND BINGO");
+logger.LogInformation("======================================");
+
+logger.LogInformation(
+    "Environment: {Environment}",
+    app.Environment.EnvironmentName
 );
 
-Console.WriteLine(
-    $"FRONTEND_JUGADOR_URL: {frontendJugadorUrl}"
+logger.LogInformation(
+    "FRONTEND_ADMIN_URL: {FrontendAdminUrl}",
+    frontendAdminUrl
 );
 
-Console.WriteLine(
-    $"FRONTEND_TABLERO_URL: {frontendTableroUrl}"
+logger.LogInformation(
+    "FRONTEND_JUGADOR_URL: {FrontendJugadorUrl}",
+    frontendJugadorUrl
 );
+
+logger.LogInformation(
+    "FRONTEND_TABLERO_URL: {FrontendTableroUrl}",
+    frontendTableroUrl
+);
+
+logger.LogInformation(
+    "DefaultConnection configurada: {TieneConnectionString}",
+    !string.IsNullOrWhiteSpace(
+        configuration.GetConnectionString("DefaultConnection")
+    )
+);
+
+logger.LogInformation("======================================");
 
 builder.Services.AddCors(options =>
 {
