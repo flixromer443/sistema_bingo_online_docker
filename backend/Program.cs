@@ -6,91 +6,67 @@ using Slamdunk.WebApi.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. Configurar Servicios y Dependencias PRIMERO
 builder.Services.AddControllers();
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
-// Add CORS policy to allow requests from your Angular app
 var configuration = builder.Configuration;
 
-var frontendAdminUrl = builder.Configuration["FRONTEND_ADMIN_URL"];
-var frontendJugadorUrl = builder.Configuration["FRONTEND_JUGADOR_URL"];
-var frontendTableroUrl = builder.Configuration["FRONTEND_TABLERO_URL"];
-
+var frontendAdminUrl = configuration["FRONTEND_ADMIN_URL"];
+var frontendJugadorUrl = configuration["FRONTEND_JUGADOR_URL"];
+var frontendTableroUrl = configuration["FRONTEND_TABLERO_URL"];
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-var app = builder.Build();
-
-var logger = app.Logger;
-
-logger.LogInformation("======================================");
-logger.LogInformation("INICIANDO BACKEND BINGO");
-logger.LogInformation("======================================");
-
-logger.LogInformation(
-    "Environment: {Environment}",
-    app.Environment.EnvironmentName
-);
-
-logger.LogInformation(
-    "FRONTEND_ADMIN_URL: {FrontendAdminUrl}",
-    frontendAdminUrl
-);
-
-logger.LogInformation(
-    "FRONTEND_JUGADOR_URL: {FrontendJugadorUrl}",
-    frontendJugadorUrl
-);
-
-logger.LogInformation(
-    "FRONTEND_TABLERO_URL: {FrontendTableroUrl}",
-    frontendTableroUrl
-);
-
-logger.LogInformation(
-    "DefaultConnection configurada: {TieneConnectionString}",
-    !string.IsNullOrWhiteSpace(
-        configuration.GetConnectionString("DefaultConnection")
-    )
-);
-
-logger.LogInformation("======================================");
-
+// Configuración de CORS (¡Antes de builder.Build()!)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policyBuilder =>
     {
-        /*policyBuilder.AllowAnyOrigin()
-                     .AllowAnyMethod()
-                     .AllowAnyHeader();*/
-        policyBuilder.WithOrigins(frontendAdminUrl, frontendJugadorUrl, frontendTableroUrl);
-        policyBuilder.AllowAnyHeader();
-        policyBuilder.AllowAnyMethod();
-        policyBuilder.AllowCredentials();
+        policyBuilder.WithOrigins(
+            frontendAdminUrl ?? "",
+            frontendJugadorUrl ?? "",
+            frontendTableroUrl ?? ""
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
-
+// Configuración de Base de Datos
 builder.Services.AddDbContext<BingoDbContext>(options =>
     options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
+// 2. Construir la aplicación UNA SOLA VEZ
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 3. Registrar Logs de inicio
+var logger = app.Logger;
+logger.LogInformation("======================================");
+logger.LogInformation("INICIANDO BACKEND BINGO");
+logger.LogInformation("======================================");
+logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentName);
+logger.LogInformation("FRONTEND_ADMIN_URL: {FrontendAdminUrl}", frontendAdminUrl);
+logger.LogInformation("FRONTEND_JUGADOR_URL: {FrontendJugadorUrl}", frontendJugadorUrl);
+logger.LogInformation("FRONTEND_TABLERO_URL: {FrontendTableroUrl}", frontendTableroUrl);
+logger.LogInformation("DefaultConnection configurada: {TieneConnectionString}", !string.IsNullOrWhiteSpace(configuration.GetConnectionString("DefaultConnection")));
+logger.LogInformation("======================================");
+
+// 4. Configurar el Pipeline HTTP (¡El orden de los Use... importa muchísimo!)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
-app.MapControllers();
-
+// CORS DEBE IR ANTES de MapControllers y MapHub
 app.UseCors("AngularApp");
+
+app.MapControllers();
 app.MapHub<BingoHub>("/bingoHub");
+
 app.Run();
