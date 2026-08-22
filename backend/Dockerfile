@@ -36,9 +36,6 @@
 #ENTRYPOINT ["dotnet", "run", "--urls", "http://0.0.0.0:5214"]
 
 
-
-
-
 # Use the official .NET SDK image as the base image
 FROM mcr.microsoft.com/dotnet/sdk:8.0
 
@@ -46,6 +43,8 @@ WORKDIR /app
 
 # 1. Copiar todo el código fuente de tu repositorio al contenedor
 COPY . .
+
+WORKDIR /app/sistema_bingo_online
 
 # 2. Instalar los paquetes necesarios (exactamente igual que tu original)
 RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.10
