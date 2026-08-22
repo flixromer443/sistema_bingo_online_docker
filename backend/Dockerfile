@@ -39,25 +39,33 @@
 
 
 
-# 1. Usar la imagen del SDK para compilar
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+# Use the official .NET SDK image as the base image
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
-# Usar un comodín para copiar el archivo .csproj sea cual sea su nombre
-COPY *.csproj ./
-RUN dotnet restore
-
-# Copiar todo el resto del código fuente
-COPY . .
-RUN dotnet publish -c Release -o /app/publish
-
-# 2. Usar la imagen runtime para ejecutar la aplicación
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/publish .
 
-# Exponer el puerto que usa Render
+# 1. Copiar todo el código fuente de tu repositorio al contenedor
+COPY . .
+
+# 2. Instalar los paquetes necesarios (exactamente igual que tu original)
+RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.10
+RUN dotnet add package Microsoft.EntityFrameworkCore.Tools --version 8.0.10
+RUN dotnet add package Microsoft.EntityFrameworkCore --version 8.0.10
+RUN dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.10
+RUN dotnet add package Swashbuckle.AspNetCore --version 6.6.2
+RUN dotnet add package Microsoft.AspNetCore.SignalR
+RUN dotnet add package itext7.pdfhtml
+RUN dotnet add package itext7.bouncy-castle-adapter
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+# Restaurar y construir tu proyecto real
+RUN dotnet restore
+RUN dotnet build
+
+# Exponer el aplicación puerto
 EXPOSE 5214
 
-# ¡IMPORTANTE! Cambia "NOMBRE_DE_TU_PROYECTO.dll" por el nombre real de tu archivo
-ENTRYPOINT ["dotnet", "Slamdunk.WebApi.dll", "--urls", "http://0.0.0.0:5214"]
+# Iniciar tu aplicación usando tu archivo binario real
+ENTRYPOINT ["dotnet", "run", "--urls", "http://0.0.0.0:5214"]
