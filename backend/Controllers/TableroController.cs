@@ -51,7 +51,7 @@ public class TableroController : ControllerBase
 
 
     [HttpPost("guardarNumeroSorteado")]
-    public async Task<ActionResult> GuardarNumeroSorteado(int numeroJugada, int numero)
+    public async Task<ActionResult> GuardarNumeroSorteado([FromQuery] int numeroJugada, [FromQuery] int numero)
     {
         var jugada = await _context.Jugadas
             .FirstOrDefaultAsync(
