@@ -16,7 +16,8 @@ var configuration = builder.Configuration;
 
 var frontendAdminUrl = configuration["FRONTEND_ADMIN_URL"];
 var frontendJugadorUrl = configuration["FRONTEND_JUGADOR_URL"];
-var frontendTableroUrl = configuration["FRONTEND_TABLERO_URL"];
+//var frontendTableroUrl = configuration["FRONTEND_TABLERO_URL"];
+var frontendTableroUrl = "https://sistema-bingo-online-docker-3.onrender.com";
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
