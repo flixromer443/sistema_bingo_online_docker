@@ -63,7 +63,7 @@ services:
   backend:
     build:
       context: backend/.
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.desarrollo
     env_file:
       - .env
     environment:

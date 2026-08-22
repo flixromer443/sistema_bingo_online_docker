@@ -1,0 +1,33 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+
+WORKDIR /app
+
+COPY . .
+
+WORKDIR /app/backend
+
+RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.10
+RUN dotnet add package Microsoft.EntityFrameworkCore.Tools --version 8.0.10
+RUN dotnet add package Microsoft.EntityFrameworkCore --version 8.0.10
+RUN dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL --version 8.0.10
+RUN dotnet add package Swashbuckle.AspNetCore --version 6.6.2
+RUN dotnet add package Microsoft.AspNetCore.SignalR
+RUN dotnet add package itext7.pdfhtml
+RUN dotnet add package itext7.bouncy-castle-adapter
+
+RUN dotnet tool install --global dotnet-ef
+ENV PATH="$PATH:/root/.dotnet/tools"
+
+RUN dotnet restore /app/backend/sistema_bingo_online.csproj
+RUN dotnet build /app/backend/sistema_bingo_online.csproj --no-restore
+
+EXPOSE 5214
+
+ENTRYPOINT ["dotnet", "run", "--urls", "http://0.0.0.0:5214"]
+
+
+
+
+
+
+
