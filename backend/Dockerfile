@@ -44,9 +44,10 @@ WORKDIR /app
 # 1. Copiar todo el código fuente de tu repositorio al contenedor
 COPY . .
 
-WORKDIR /app/sistema_bingo_online
+# 2. Entrar a la carpeta "backend" donde se encuentra tu archivo .csproj y tu código real
+WORKDIR /app/backend
 
-# 2. Instalar los paquetes necesarios (exactamente igual que tu original)
+# 3. Instalar los paquetes necesarios (exactamente igual que tu original)
 RUN dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.10
 RUN dotnet add package Microsoft.EntityFrameworkCore.Tools --version 8.0.10
 RUN dotnet add package Microsoft.EntityFrameworkCore --version 8.0.10
@@ -59,12 +60,12 @@ RUN dotnet add package itext7.bouncy-castle-adapter
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-# Restaurar y construir tu proyecto real
+# Restaurar y construir tu proyecto real dentro de la carpeta backend
 RUN dotnet restore
 RUN dotnet build
 
-# Exponer el aplicación puerto
+# Exponer el puerto de la aplicación
 EXPOSE 5214
 
-# Iniciar tu aplicación usando tu archivo binario real
+# Iniciar tu aplicación
 ENTRYPOINT ["dotnet", "run", "--urls", "http://0.0.0.0:5214"]
