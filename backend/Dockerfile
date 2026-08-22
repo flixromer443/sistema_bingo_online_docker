@@ -43,15 +43,15 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copiar el archivo .csproj y restaurar dependencias
-COPY ["sistema_bingo_online.csproj", "./"]
+# Usar un comodín para copiar el archivo .csproj sea cual sea su nombre
+COPY *.csproj ./
 RUN dotnet restore
 
 # Copiar todo el resto del código fuente
 COPY . .
 RUN dotnet publish -c Release -o /app/publish
 
-# 2. Usar la imagen runtime para ejecutar la aplicación (más ligera y segura)
+# 2. Usar la imagen runtime para ejecutar la aplicación
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
@@ -59,5 +59,5 @@ COPY --from=build /app/publish .
 # Exponer el puerto que usa Render
 EXPOSE 5214
 
-# Iniciar la aplicación
-ENTRYPOINT ["dotnet", "sistema_bingo_online.dll", "--urls", "http://0.0.0.0:5214"]
+# ¡IMPORTANTE! Cambia "NOMBRE_DE_TU_PROYECTO.dll" por el nombre real de tu archivo
+ENTRYPOINT ["dotnet", "Slamdunk.WebApi.dll", "--urls", "http://0.0.0.0:5214"]
