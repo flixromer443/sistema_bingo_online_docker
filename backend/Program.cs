@@ -65,13 +65,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policyBuilder =>
     {
-        policyBuilder.AllowAnyOrigin()
+        /*policyBuilder.AllowAnyOrigin()
                      .AllowAnyMethod()
-                     .AllowAnyHeader();
-        /*policyBuilder.WithOrigins(frontendAdminUrl, frontendJugadorUrl, frontendTableroUrl);
+                     .AllowAnyHeader();*/
+        policyBuilder.WithOrigins(frontendAdminUrl, frontendJugadorUrl, frontendTableroUrl);
         policyBuilder.AllowAnyHeader();
         policyBuilder.AllowAnyMethod();
-        policyBuilder.AllowCredentials();*/
+        policyBuilder.AllowCredentials();
     });
 });
 
