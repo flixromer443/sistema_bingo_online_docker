@@ -60,9 +60,9 @@ RUN dotnet add package itext7.bouncy-castle-adapter
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
-# Restaurar y construir tu proyecto real dentro de la carpeta backend
-RUN dotnet restore
-RUN dotnet build
+# En lugar de solo "dotnet restore" y "dotnet build":
+RUN dotnet restore /app/backend/sistema_bingo_online.csproj
+RUN dotnet build /app/backend/sistema_bingo_online.csproj --no-restore
 
 # Exponer el puerto de la aplicación
 EXPOSE 5214
