@@ -37,9 +37,20 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Configuración inteligente de la Base de Datos (Soporta formato local y URLs de Render)
+var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+if (!string.IsNullOrEmpty(connectionString) && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://")))
+{
+    var databaseUri = new Uri(connectionString);
+    var userInfo = databaseUri.UserInfo.Split(':');
+
+    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true";
+}
+
 // Configuración de Base de Datos
 builder.Services.AddDbContext<BingoDbContext>(options =>
-    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 // 2. Construir la aplicación UNA SOLA VEZ
 var app = builder.Build();
@@ -53,7 +64,7 @@ logger.LogInformation("Environment: {Environment}", app.Environment.EnvironmentN
 logger.LogInformation("FRONTEND_ADMIN_URL: {FrontendAdminUrl}", frontendAdminUrl);
 logger.LogInformation("FRONTEND_JUGADOR_URL: {FrontendJugadorUrl}", frontendJugadorUrl);
 logger.LogInformation("FRONTEND_TABLERO_URL: {FrontendTableroUrl}", frontendTableroUrl);
-logger.LogInformation("DefaultConnection configurada: {TieneConnectionString}", !string.IsNullOrWhiteSpace(configuration.GetConnectionString("DefaultConnection")));
+logger.LogInformation("Connection string configurada correctamente");
 logger.LogInformation("======================================");
 
 // 4. Configurar el Pipeline HTTP (¡El orden de los Use... importa muchísimo!)
@@ -68,5 +79,34 @@ app.UseCors("AngularApp");
 
 app.MapControllers();
 app.MapHub<BingoHub>("/bingoHub");
+
+// =======================================================================
+// NUEVO: EJECUTAR MIGRACIONES AUTOMÁTICAS EN LA BASE DE DATOS DE RENDER
+// =======================================================================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<BingoDbContext>();
+
+        logger.LogInformation("Verificando si existen migraciones pendientes...");
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            logger.LogInformation("Aplicando migraciones en la base de datos de Render...");
+            context.Database.Migrate();
+            logger.LogInformation("¡Migraciones aplicadas con éxito!");
+        }
+        else
+        {
+            logger.LogInformation("La base de datos ya está actualizada. No se requieren cambios.");
+        }
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "ERROR FATAL: No se pudieron aplicar las migraciones al iniciar.");
+    }
+}
+// =======================================================================
 
 app.Run();
