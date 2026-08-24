@@ -1,87 +1,182 @@
-<section class="vh-100 d-flex align-items-center">
-  <div class="container">
-    <!-- SPINNER -->
+<section class="verification-page">
+
+  <!-- SPINNER -->
   <div class="overlay" *ngIf="cargando">
     <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
   </div>
 
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-5">
+  <div class="container">
 
-        <p-card styleClass="user-form text-center">
+    <div class="row justify-content-center">
+
+      <div class="col-md-7 col-lg-5">
+
+        <p-card styleClass="user-form">
+
+          <!-- ================================================= -->
+          <!-- HEADER -->
+          <!-- ================================================= -->
 
           <ng-template pTemplate="header">
-            <div class="w-100 text-center">
-              <h3 class="m-0 fw-bold">Verificación de Código</h3>
-              <small>Ingresá el código de 6 dígitos</small>
+
+            <div class="verification-header text-center">
+
+              <h2>
+                Verificación de Código
+              </h2>
+
+              <small>
+                Ingresá el código de 6 dígitos
+              </small>
+
             </div>
+
           </ng-template>
 
-          <div *ngIf="message" class="alert alert-success text-center mb-3">
+
+          <!-- ================================================= -->
+          <!-- MENSAJES -->
+          <!-- ================================================= -->
+
+          <div
+            *ngIf="message"
+            class="alert alert-success text-center mb-4">
+
             {{ message }}
+
           </div>
-          <div *ngIf="errorMessage" class="alert alert-danger text-center mb-3">
+
+
+          <div
+            *ngIf="errorMessage"
+            class="alert alert-danger text-center mb-4">
+
             {{ errorMessage }}
+
           </div>
 
-          <form [formGroup]="codeForm" (ngSubmit)="verifyCode()" class="text-start">
 
-            <!-- OTP INPUTS -->
-            <div class="d-flex justify-content-between gap-2 mb-3">
+          <!-- ================================================= -->
+          <!-- FORMULARIO -->
+          <!-- ================================================= -->
 
-              <input #i1 type="text" maxlength="1"
-                     class="form-control text-center otp-input"
-                     formControlName="d1"
-                     (input)="onInput($event, i2)">
+          <form
+            [formGroup]="codeForm"
+            (ngSubmit)="verifyCode()"
+            class="verification-form">
 
-              <input #i2 type="text" maxlength="1"
-                     class="form-control text-center otp-input"
-                     formControlName="d2"
-                     (input)="onInput($event, i3)"
-                     (keydown.backspace)="onBackspace($event, i1)">
 
-              <input #i3 type="text" maxlength="1"
-                     class="form-control text-center otp-input"
-                     formControlName="d3"
-                     (input)="onInput($event, i4)"
-                     (keydown.backspace)="onBackspace($event, i2)">
+            <!-- ================================================= -->
+            <!-- TITULO -->
+            <!-- ================================================= -->
 
-              <input #i4 type="text" maxlength="1"
-                     class="form-control text-center otp-input"
-                     formControlName="d4"
-                     (input)="onInput($event, i5)"
-                     (keydown.backspace)="onBackspace($event, i3)">
+            <h6 class="text-center form-title">
 
-              <input #i5 type="text" maxlength="1"
-                     class="form-control text-center otp-input"
-                     formControlName="d5"
-                     (input)="onInput($event, i6)"
-                     (keydown.backspace)="onBackspace($event, i4)">
+              Código de verificación
 
-              <input #i6 type="text" maxlength="1"
-                     class="form-control text-center otp-input"
-                     formControlName="d6"
-                     (input)="onInput($event, btnVerify)"
-                     (keydown.backspace)="onBackspace($event, i5)">
+            </h6>
+
+
+            <!-- ================================================= -->
+            <!-- OTP -->
+            <!-- ================================================= -->
+
+            <div class="otp-container">
+
+              <input
+                #i1
+                type="text"
+                maxlength="1"
+                class="otp-input"
+                formControlName="d1"
+                (input)="onInput($event, i2)">
+
+
+              <input
+                #i2
+                type="text"
+                maxlength="1"
+                class="otp-input"
+                formControlName="d2"
+                (input)="onInput($event, i3)"
+                (keydown.backspace)="onBackspace($event, i1)">
+
+
+              <input
+                #i3
+                type="text"
+                maxlength="1"
+                class="otp-input"
+                formControlName="d3"
+                (input)="onInput($event, i4)"
+                (keydown.backspace)="onBackspace($event, i2)">
+
+
+              <input
+                #i4
+                type="text"
+                maxlength="1"
+                class="otp-input"
+                formControlName="d4"
+                (input)="onInput($event, i5)"
+                (keydown.backspace)="onBackspace($event, i3)">
+
+
+              <input
+                #i5
+                type="text"
+                maxlength="1"
+                class="otp-input"
+                formControlName="d5"
+                (input)="onInput($event, i6)"
+                (keydown.backspace)="onBackspace($event, i4)">
+
+
+              <input
+                #i6
+                type="text"
+                maxlength="1"
+                class="otp-input"
+                formControlName="d6"
+                (input)="onInput($event, btnVerify)"
+                (keydown.backspace)="onBackspace($event, i5)">
 
             </div>
 
+
+            <!-- ================================================= -->
             <!-- BOTÓN -->
-            <button #btnVerify
-                    type="submit"
-                    class="btn btn-primary w-100"
-                    [disabled]="codeForm.invalid || cargando">
+            <!-- ================================================= -->
+
+            <button
+              #btnVerify
+              type="submit"
+              class="btn btn-verify w-100"
+              [disabled]="codeForm.invalid || cargando">
+
               Verificar código
+
             </button>
 
-            <br><br>
 
+            <!-- ================================================= -->
             <!-- REENVIAR -->
-            <div class="text-center">
-              <span>¿No recibiste el código?</span>
-              <a (click)="resendCode()" class="link-primary" style="cursor:pointer;">
+            <!-- ================================================= -->
+
+            <div class="resend-container">
+
+              <span>
+                ¿No recibiste el código?
+              </span>
+
+              <a
+                (click)="resendCode()"
+                class="resend-link">
+
                 Reenviar código
+
               </a>
+
             </div>
 
           </form>
@@ -89,7 +184,9 @@
         </p-card>
 
       </div>
+
     </div>
 
   </div>
+
 </section>
