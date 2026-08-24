@@ -40,15 +40,17 @@ builder.Services.AddCors(options =>
 // Configuración inteligente de la Base de Datos (Soporta formato local y URLs de Render)
 var connectionString = configuration.GetConnectionString("DefaultConnection");
 
-//  Código corregido
 if (!string.IsNullOrEmpty(connectionString) && (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://")))
 {
     var databaseUri = new Uri(connectionString);
     var userInfo = databaseUri.UserInfo.Split(':');
 
-    // Se agregan los corchetes [0] y [1] para extraer el usuario y la contraseña reales
-    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true";
+    // SOLUCIÓN: Si .NET devuelve -1 porque no reconoce el protocolo, le asignamos 5432
+    var dbPort = databaseUri.Port == -1 ? 5432 : databaseUri.Port;
+
+    connectionString = $"Host={databaseUri.Host};Port={dbPort};Database={databaseUri.LocalPath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true";
 }
+
 
 // Configuración de Base de Datos
 builder.Services.AddDbContext<BingoDbContext>(options =>
