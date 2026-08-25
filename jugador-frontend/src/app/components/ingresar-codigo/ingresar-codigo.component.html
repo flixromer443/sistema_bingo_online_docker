@@ -1,9 +1,19 @@
 <section class="verification-page">
 
+  <!-- ================================================= -->
   <!-- SPINNER -->
-  <div class="overlay" *ngIf="cargando">
-    <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+  <!-- ================================================= -->
+
+  <div
+    class="overlay"
+    *ngIf="cargando">
+
+    <p-progressSpinner
+      ariaLabel="loading">
+    </p-progressSpinner>
+
   </div>
+
 
   <div class="container">
 
@@ -12,6 +22,7 @@
       <div class="col-md-7 col-lg-5">
 
         <p-card styleClass="user-form">
+
 
           <!-- ================================================= -->
           <!-- HEADER -->
@@ -35,7 +46,7 @@
 
 
           <!-- ================================================= -->
-          <!-- MENSAJES -->
+          <!-- MENSAJE ÉXITO -->
           <!-- ================================================= -->
 
           <div
@@ -46,6 +57,10 @@
 
           </div>
 
+
+          <!-- ================================================= -->
+          <!-- MENSAJE ERROR -->
+          <!-- ================================================= -->
 
           <div
             *ngIf="errorMessage"
@@ -83,18 +98,32 @@
 
             <div class="otp-container">
 
+
+              <!-- ============================= -->
+              <!-- DIGITO 1 -->
+              <!-- ============================= -->
+
               <input
                 #i1
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                autocomplete="one-time-code"
                 maxlength="1"
                 class="otp-input"
                 formControlName="d1"
                 (input)="onInput($event, i2)">
 
 
+              <!-- ============================= -->
+              <!-- DIGITO 2 -->
+              <!-- ============================= -->
+
               <input
                 #i2
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 maxlength="1"
                 class="otp-input"
                 formControlName="d2"
@@ -102,9 +131,15 @@
                 (keydown.backspace)="onBackspace($event, i1)">
 
 
+              <!-- ============================= -->
+              <!-- DIGITO 3 -->
+              <!-- ============================= -->
+
               <input
                 #i3
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 maxlength="1"
                 class="otp-input"
                 formControlName="d3"
@@ -112,9 +147,15 @@
                 (keydown.backspace)="onBackspace($event, i2)">
 
 
+              <!-- ============================= -->
+              <!-- DIGITO 4 -->
+              <!-- ============================= -->
+
               <input
                 #i4
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 maxlength="1"
                 class="otp-input"
                 formControlName="d4"
@@ -122,9 +163,15 @@
                 (keydown.backspace)="onBackspace($event, i3)">
 
 
+              <!-- ============================= -->
+              <!-- DIGITO 5 -->
+              <!-- ============================= -->
+
               <input
                 #i5
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 maxlength="1"
                 class="otp-input"
                 formControlName="d5"
@@ -132,9 +179,15 @@
                 (keydown.backspace)="onBackspace($event, i4)">
 
 
+              <!-- ============================= -->
+              <!-- DIGITO 6 -->
+              <!-- ============================= -->
+
               <input
                 #i6
                 type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 maxlength="1"
                 class="otp-input"
                 formControlName="d6"
@@ -178,6 +231,7 @@
               </a>
 
             </div>
+
 
           </form>
 

@@ -1,8 +1,6 @@
 import {
   Component,
-  OnInit,
-  ElementRef,
-  ViewChild
+  OnInit
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
@@ -30,6 +28,7 @@ import { JugadorService } from '../../service/jugador.service';
 
 @Component({
   selector: 'app-ingresar-codigo',
+
   standalone: true,
 
   imports: [
@@ -43,11 +42,20 @@ import { JugadorService } from '../../service/jugador.service';
   ],
 
   templateUrl: './ingresar-codigo.component.html',
-  styleUrls: ['./ingresar-codigo.component.css']
+
+  styleUrls: [
+    './ingresar-codigo.component.css'
+  ]
 })
 export class IngresarCodigoComponent implements OnInit {
 
+
+  // =====================================================
+  // VARIABLES
+  // =====================================================
+
   idUsuario!: number;
+
   accion!: number;
 
   codeForm!: FormGroup;
@@ -55,13 +63,15 @@ export class IngresarCodigoComponent implements OnInit {
   cargando = false;
 
   message = '';
+
   errorMessage = '';
 
   private alertTimeout: any;
 
-  @ViewChild('btnVerify')
-  btnVerify!: ElementRef;
 
+  // =====================================================
+  // CONSTRUCTOR
+  // =====================================================
 
   constructor(
     private fb: FormBuilder,
@@ -71,28 +81,31 @@ export class IngresarCodigoComponent implements OnInit {
   ) {}
 
 
+  // =====================================================
+  // INIT
+  // =====================================================
+
   ngOnInit(): void {
 
-    // =====================================================
+
+    // ===================================================
     // OBTENER PARÁMETROS DE LA URL
-    // =====================================================
+    // ===================================================
 
     this.route.queryParams.subscribe(params => {
 
-      this.idUsuario = Number(
-        params['id_usuario']
-      );
+      this.idUsuario =
+        Number(params['id_usuario']);
 
-      this.accion = Number(
-        params['accion']
-      );
+      this.accion =
+        Number(params['accion']);
 
     });
 
 
-    // =====================================================
-    // FORMULARIO DEL CÓDIGO
-    // =====================================================
+    // ===================================================
+    // FORMULARIO
+    // ===================================================
 
     this.codeForm = this.fb.group({
 
@@ -147,9 +160,9 @@ export class IngresarCodigoComponent implements OnInit {
     });
 
 
-    // =====================================================
-    // VERIFICAR AUTOMÁTICAMENTE AL COMPLETAR LOS 6 DÍGITOS
-    // =====================================================
+    // ===================================================
+    // VERIFICAR AUTOMÁTICAMENTE AL COMPLETAR LOS 6
+    // ===================================================
 
     this.codeForm.valueChanges.subscribe(values => {
 
@@ -172,66 +185,132 @@ export class IngresarCodigoComponent implements OnInit {
   }
 
 
-  // =======================================================
-  // MANEJO DE INPUTS
-  // =======================================================
+  // =====================================================
+  // MANEJO DE INPUT
+  // =====================================================
 
   onInput(
     event: Event,
-    next: HTMLInputElement | HTMLButtonElement | null
+    next: HTMLInputElement | HTMLButtonElement
   ): void {
+
 
     const input =
       event.target as HTMLInputElement;
 
 
-    // Permitir únicamente números
+    // ===================================================
+    // OBTENER SOLAMENTE NÚMEROS
+    // ===================================================
 
-    input.value =
+    let value =
       input.value.replace(/[^0-9]/g, '');
 
 
-    // Pasar automáticamente al siguiente campo
+    // ===================================================
+    // LIMITAR A UN SOLO DÍGITO
+    // ===================================================
 
-    if (input.value.length === 1) {
+    value =
+      value.substring(0, 1);
 
-      if (next instanceof HTMLInputElement) {
+
+    // ===================================================
+    // ACTUALIZAR INPUT
+    // ===================================================
+
+    input.value = value;
+
+
+    // ===================================================
+    // ACTUALIZAR FORMCONTROL
+    // ===================================================
+
+    const controlName =
+      input.getAttribute('formControlName');
+
+
+    if (controlName) {
+
+      this.codeForm
+        .get(controlName)
+        ?.setValue(
+          value,
+          {
+            emitEvent: true
+          }
+        );
+
+    }
+
+
+    // ===================================================
+    // SI NO HAY NÚMERO, NO AVANZAR
+    // ===================================================
+
+    if (!value) {
+
+      return;
+
+    }
+
+
+    // ===================================================
+    // SI ES INPUT, PASAR AL SIGUIENTE
+    // ===================================================
+
+    if (
+      next instanceof HTMLInputElement
+    ) {
+
+      setTimeout(() => {
 
         next.focus();
 
-      }
+        next.select();
+
+      }, 0);
+
+      return;
+
+    }
 
 
-      if (next instanceof HTMLButtonElement) {
+    // ===================================================
+    // SI ES EL BOTÓN
+    // ===================================================
 
-        setTimeout(() => {
+    if (
+      next instanceof HTMLButtonElement
+    ) {
 
-          if (
-            this.codeForm.valid &&
-            !this.cargando
-          ) {
+      setTimeout(() => {
 
-            this.verifyCode();
+        if (
+          this.codeForm.valid &&
+          !this.cargando
+        ) {
 
-          }
+          this.verifyCode();
 
-        }, 0);
+        }
 
-      }
+      }, 0);
 
     }
 
   }
 
 
-  // =======================================================
+  // =====================================================
   // BACKSPACE
-  // =======================================================
+  // =====================================================
 
   onBackspace(
     event: Event,
-    prev: HTMLInputElement | null
+    prev: HTMLInputElement
   ): void {
+
 
     const keyboardEvent =
       event as KeyboardEvent;
@@ -241,32 +320,57 @@ export class IngresarCodigoComponent implements OnInit {
       keyboardEvent.target as HTMLInputElement;
 
 
+    // ===================================================
+    // SI EL CAMPO ESTÁ VACÍO
+    // VOLVER AL ANTERIOR
+    // ===================================================
+
     if (
       !input.value &&
       prev
     ) {
 
-      prev.focus();
+      setTimeout(() => {
+
+        prev.focus();
+
+        prev.select();
+
+      }, 0);
 
     }
 
   }
 
 
-  // =======================================================
+  // =====================================================
   // VALIDAR CÓDIGO
-  // =======================================================
+  // =====================================================
 
   verifyCode(): void {
 
-    if (this.codeForm.invalid || this.cargando) {
+
+    // ===================================================
+    // VALIDACIÓN
+    // ===================================================
+
+    if (
+      this.codeForm.invalid ||
+      this.cargando
+    ) {
 
       this.showError(
         'Ingresá los 6 dígitos del código'
       );
 
       return;
+
     }
+
+
+    // ===================================================
+    // ARMAR CÓDIGO
+    // ===================================================
 
     const code =
       this.codeForm.value.d1 +
@@ -276,19 +380,51 @@ export class IngresarCodigoComponent implements OnInit {
       this.codeForm.value.d5 +
       this.codeForm.value.d6;
 
+
+    console.log(
+      'CÓDIGO INGRESADO:',
+      code
+    );
+
+
+    // ===================================================
+    // MOSTRAR SPINNER
+    // ===================================================
+
     this.cargando = true;
+
+
+    // ===================================================
+    // VALIDAR EN BACKEND
+    // ===================================================
 
     this.jugadorService
       .validarCodigoVerificacion(code)
       .subscribe({
 
+        // =================================================
+        // RESPUESTA CORRECTA
+        // =================================================
+
         next: (response: any) => {
 
-          console.log('RESPUESTA VALIDAR CÓDIGO:', response);
+
+          console.log(
+            'RESPUESTA VALIDAR CÓDIGO:',
+            response
+          );
+
 
           this.cargando = false;
 
-          if (!response?.success) {
+
+          // ===============================================
+          // CÓDIGO INVÁLIDO
+          // ===============================================
+
+          if (
+            !response?.success
+          ) {
 
             this.showError(
               response?.message ||
@@ -296,45 +432,75 @@ export class IngresarCodigoComponent implements OnInit {
             );
 
             return;
+
           }
+
+
+          // ===============================================
+          // OBTENER CARTONES
+          // ===============================================
 
           const cartones =
             response.data?.cartones ?? [];
 
-          console.log('CARTONES RECIBIDOS:', cartones);
 
-          if (cartones.length === 0) {
+          console.log(
+            'CARTONES RECIBIDOS:',
+            cartones
+          );
+
+
+          // ===============================================
+          // SIN CARTONES
+          // ===============================================
+
+          if (
+            cartones.length === 0
+          ) {
 
             this.showError(
               'No se encontraron cartones.'
             );
 
             return;
+
           }
 
-          if (cartones.length > 6) {
+
+          // ===============================================
+          // MÁXIMO 6 CARTONES
+          // ===============================================
+
+          if (
+            cartones.length > 6
+          ) {
 
             this.showError(
               'La cantidad de cartones recibidos no es válida.'
             );
 
             return;
+
           }
 
-          /*
-           * Guardamos los cartones para que
-           * /jugador pueda recuperarlos.
-           */
+
+          // ===============================================
+          // GUARDAR CARTONES
+          // ===============================================
+
           sessionStorage.setItem(
             'cartones_jugador',
             JSON.stringify(cartones)
           );
 
-          /*
-           * Guardamos también el id del jugador
-           * si el backend lo devuelve.
-           */
-          if (response.data?.idJugador) {
+
+          // ===============================================
+          // GUARDAR ID JUGADOR
+          // ===============================================
+
+          if (
+            response.data?.idJugador
+          ) {
 
             sessionStorage.setItem(
               'id_usuario',
@@ -343,21 +509,33 @@ export class IngresarCodigoComponent implements OnInit {
 
           }
 
-          /*
-           * Ir directamente al tablero del jugador.
-           */
-          this.router.navigate(['/control-carton']);
+
+          // ===============================================
+          // IR AL TABLERO
+          // ===============================================
+
+          this.router.navigate([
+            '/control-carton'
+          ]);
 
         },
 
+
+        // =================================================
+        // ERROR
+        // =================================================
+
         error: (err: any) => {
+
 
           console.error(
             'ERROR VALIDANDO CÓDIGO:',
             err
           );
 
+
           this.cargando = false;
+
 
           this.showError(
             err?.error?.message ||
@@ -371,12 +549,12 @@ export class IngresarCodigoComponent implements OnInit {
   }
 
 
-
-  // =======================================================
+  // =====================================================
   // OBTENER CARTONES DEL JUGADOR
-  // =======================================================
+  // =====================================================
 
   private obtenerCartonesJugador(): void {
+
 
     this.jugadorService
       .obtenerCartonesJugador(
@@ -384,16 +562,23 @@ export class IngresarCodigoComponent implements OnInit {
       )
       .subscribe({
 
+        // =================================================
+        // RESPUESTA
+        // =================================================
+
         next: (response: any) => {
+
 
           this.cargando = false;
 
 
-          // -----------------------------------------------
+          // ===============================================
           // RESPUESTA INCORRECTA
-          // -----------------------------------------------
+          // ===============================================
 
-          if (!response.success) {
+          if (
+            !response.success
+          ) {
 
             this.showError(
               response.message ||
@@ -405,19 +590,21 @@ export class IngresarCodigoComponent implements OnInit {
           }
 
 
-          // -----------------------------------------------
+          // ===============================================
           // OBTENER CARTONES
-          // -----------------------------------------------
+          // ===============================================
 
           const cartones =
             response.data?.cartones ?? [];
 
 
-          // -----------------------------------------------
+          // ===============================================
           // SIN CARTONES
-          // -----------------------------------------------
+          // ===============================================
 
-          if (cartones.length === 0) {
+          if (
+            cartones.length === 0
+          ) {
 
             this.showError(
               'No tenés cartones asignados.'
@@ -428,11 +615,13 @@ export class IngresarCodigoComponent implements OnInit {
           }
 
 
-          // -----------------------------------------------
+          // ===============================================
           // MÁXIMO 6 CARTONES
-          // -----------------------------------------------
+          // ===============================================
 
-          if (cartones.length > 6) {
+          if (
+            cartones.length > 6
+          ) {
 
             this.showError(
               'La cantidad de cartones asignados no es válida.'
@@ -443,9 +632,9 @@ export class IngresarCodigoComponent implements OnInit {
           }
 
 
-          // =================================================
+          // ===============================================
           // GUARDAR CARTONES
-          // =================================================
+          // ===============================================
 
           sessionStorage.setItem(
             'cartones_jugador',
@@ -453,9 +642,9 @@ export class IngresarCodigoComponent implements OnInit {
           );
 
 
-          // =================================================
-          // GUARDAR ID DEL USUARIO
-          // =================================================
+          // ===============================================
+          // GUARDAR ID USUARIO
+          // ===============================================
 
           sessionStorage.setItem(
             'id_usuario',
@@ -463,9 +652,9 @@ export class IngresarCodigoComponent implements OnInit {
           );
 
 
-          // =================================================
-          // IR AL CONTROL DE CARTÓN
-          // =================================================
+          // ===============================================
+          // IR AL JUGADOR
+          // ===============================================
 
           this.router.navigate([
             '/jugador'
@@ -474,13 +663,15 @@ export class IngresarCodigoComponent implements OnInit {
         },
 
 
-        // ===================================================
-        // ERROR AL OBTENER CARTONES
-        // ===================================================
+        // =================================================
+        // ERROR
+        // =================================================
 
         error: (err: any) => {
 
+
           this.cargando = false;
+
 
           this.showError(
             err?.error?.message ||
@@ -494,11 +685,12 @@ export class IngresarCodigoComponent implements OnInit {
   }
 
 
-  // =======================================================
+  // =====================================================
   // REENVIAR CÓDIGO
-  // =======================================================
+  // =====================================================
 
   resendCode(): void {
+
 
     this.cargando = true;
 
@@ -509,18 +701,26 @@ export class IngresarCodigoComponent implements OnInit {
       )
       .subscribe({
 
+        // =================================================
+        // RESPUESTA
+        // =================================================
+
         next: (response: any) => {
+
 
           this.cargando = false;
 
 
-          if (response.success) {
+          if (
+            response.success
+          ) {
 
             this.showMessage(
               response.message
             );
 
           }
+
           else {
 
             this.showError(
@@ -534,12 +734,14 @@ export class IngresarCodigoComponent implements OnInit {
 
 
         // =================================================
-        // ERROR AL REENVIAR
+        // ERROR
         // =================================================
 
         error: (err: any) => {
 
+
           this.cargando = false;
+
 
           this.showError(
             err?.error?.message ||
@@ -553,15 +755,18 @@ export class IngresarCodigoComponent implements OnInit {
   }
 
 
-  // =======================================================
+  // =====================================================
   // MOSTRAR MENSAJE
-  // =======================================================
+  // =====================================================
 
   private showMessage(
     message: string
   ): void {
 
-    this.message = message;
+
+    this.message =
+      message;
+
 
     clearTimeout(
       this.alertTimeout
@@ -578,15 +783,18 @@ export class IngresarCodigoComponent implements OnInit {
   }
 
 
-  // =======================================================
+  // =====================================================
   // MOSTRAR ERROR
-  // =======================================================
+  // =====================================================
 
   private showError(
     message: string
   ): void {
 
-    this.errorMessage = message;
+
+    this.errorMessage =
+      message;
+
 
     clearTimeout(
       this.alertTimeout
