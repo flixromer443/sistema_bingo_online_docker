@@ -11,9 +11,6 @@ namespace Data
 
         }
 
-        public DbSet<User> Users { get; set; }
-
-        public DbSet<Images> images { get; set; }
         public DbSet<Carton> Cartones { get; set; }
 
         public DbSet<Ganador> Ganadores { get; set; }

@@ -3,20 +3,17 @@ using System;
 using Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Slamdunk.WebApi.Migrations
+namespace sistema_bingo_online.Migrations
 {
     [DbContext(typeof(BingoDbContext))]
-    [Migration("20260807152459_migracion1")]
-    partial class migracion1
+    partial class BingoDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,48 +21,6 @@ namespace Slamdunk.WebApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Models.Images", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("Imagen")
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("NombreImagen")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("images");
-                });
-
-            modelBuilder.Entity("Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("prueba_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Age")
-                        .HasColumnType("integer")
-                        .HasColumnName("edad");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("nombre");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Prueba");
-                });
 
             modelBuilder.Entity("Slamdunk.WebApi.Models.Carton", b =>
                 {
@@ -270,7 +225,7 @@ namespace Slamdunk.WebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("JugadorId")
+                    b.Property<int?>("JugadorId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -359,9 +314,7 @@ namespace Slamdunk.WebApi.Migrations
                 {
                     b.HasOne("Slamdunk.WebApi.Models.Jugador", "Jugador")
                         .WithMany("Tokens")
-                        .HasForeignKey("JugadorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JugadorId");
 
                     b.Navigation("Jugador");
                 });

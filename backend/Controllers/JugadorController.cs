@@ -50,14 +50,14 @@ public class JugadorController : ControllerBase
         // CÓDIGO DE PRUEBA
         // -----------------------------------------------------
 
-        if (request.Codigo != "111111")
+        /*if (request.Codigo != "111111")
         {
             return BadRequest(new
             {
                 success = false,
                 message = "El código ingresado no es válido."
             });
-        }
+        }*/
 
 
         // -----------------------------------------------------
@@ -67,8 +67,10 @@ public class JugadorController : ControllerBase
         var cartones = await _context.Cartones
             .Include(c => c.Jugada)
             .Include(c => c.Numeros)
-            .OrderBy(c => Guid.NewGuid())
-            .Take(6)
+            //.OrderBy(c => Guid.NewGuid())
+            //.Take(6)
+
+            .Where(c => c.Token.Codigo == request.Codigo)
             .Select(c => new
             {
                 id = c.Id,

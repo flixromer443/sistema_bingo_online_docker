@@ -3,10 +3,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Slamdunk.WebApi.Migrations
+namespace sistema_bingo_online.Migrations
 {
     /// <inheritdoc />
-    public partial class InicialPostgres : Migration
+    public partial class migracion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,6 +57,26 @@ namespace Slamdunk.WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "NumerosSorteados",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Numero = table.Column<int>(type: "integer", nullable: false),
+                    JugadaId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_NumerosSorteados", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_NumerosSorteados_Jugadas_JugadaId",
+                        column: x => x.JugadaId,
+                        principalTable: "Jugadas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Premios",
                 columns: table => new
                 {
@@ -83,7 +103,7 @@ namespace Slamdunk.WebApi.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Codigo = table.Column<string>(type: "text", nullable: false),
-                    JugadorId = table.Column<int>(type: "integer", nullable: false)
+                    JugadorId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -92,8 +112,7 @@ namespace Slamdunk.WebApi.Migrations
                         name: "FK_Tokens_Jugadores_JugadorId",
                         column: x => x.JugadorId,
                         principalTable: "Jugadores",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -206,6 +225,11 @@ namespace Slamdunk.WebApi.Migrations
                 column: "CartonId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NumerosSorteados_JugadaId",
+                table: "NumerosSorteados",
+                column: "JugadaId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Premios_JugadaId",
                 table: "Premios",
                 column: "JugadaId");
@@ -224,6 +248,9 @@ namespace Slamdunk.WebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "NumerosCarton");
+
+            migrationBuilder.DropTable(
+                name: "NumerosSorteados");
 
             migrationBuilder.DropTable(
                 name: "Tbl1DtsVariables");
