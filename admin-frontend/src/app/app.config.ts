@@ -34,7 +34,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { PasswordModule } from 'primeng/password'; 
 
 //interceptor
-import { AuthInterceptor } from './services/interceptor';
+import { AuthInterceptor } from './service/interceptor';
 
 // Servicios
 import { MessageService } from 'primeng/api';

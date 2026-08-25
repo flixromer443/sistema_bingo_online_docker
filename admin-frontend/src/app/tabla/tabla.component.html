@@ -1,37 +1,368 @@
 <div class="title">
-    <h1>Tabla del API</h1>
+    <h1>Administración - Bingo San Jose</h1>
 </div>
+
+
 <div class="content">
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Edad</th>
-                    <th>Detalle <button class="w3-button" (click)="descargarPDF()">Descargar PDF</button></th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (User of Users; track User.id) {
-                <tr>
-                    <td>
-                        {{User.id}}
-                    </td>
-                    <td>
-                        {{User.name}}
-                    </td>
-                    <td>
-                        {{User.age}}
-                    </td>
-                    <td>
-                        <button class="w3-button" [routerLink]="['/detalle',User.id]">Ver detalle <i class="fa fa-eye"></i></button>
-                        <button class="w3-button" [routerLink]="['/modificar',User.id]">Modificar <i class="fa fa-pencil"></i></button>
-                        <app-btn-eliminar [id]="User.id"></app-btn-eliminar>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
+
+    <!-- ===================================================== -->
+    <!-- ALTA DE JUGADOR -->
+    <!-- ===================================================== -->
+
+    <div class="player-form">
+
+        <h2>Nuevo jugador</h2>
+
+        <div class="form-row">
+
+            <div class="form-group">
+
+                <label for="nombre">
+                    Nombre
+                </label>
+
+                <input
+                    id="nombre"
+                    type="text"
+                    [(ngModel)]="nuevoJugador.nombre"
+                    placeholder="Nombre">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="apellido">
+                    Apellido
+                </label>
+
+                <input
+                    id="apellido"
+                    type="text"
+                    [(ngModel)]="nuevoJugador.apellido"
+                    placeholder="Apellido">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="dni">
+                    DNI
+                </label>
+
+                <input
+                    id="dni"
+                    type="text"
+                    [(ngModel)]="nuevoJugador.dni"
+                    placeholder="DNI">
+
+            </div>
+
+
+            <div class="form-group button-container">
+
+                <button
+                    class="w3-button"
+                    type="button"
+                    (click)="crearJugador()"
+                    [disabled]="guardandoJugador">
+
+                    {{ guardandoJugador
+                        ? 'Guardando...'
+                        : 'Cargar jugador' }}
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        @if (mensajeJugador) {
+
+            <div class="success-message">
+
+                {{ mensajeJugador }}
+
+            </div>
+
+        }
+
+
+        @if (errorJugador) {
+
+            <div class="error-message">
+
+                {{ errorJugador }}
+
+            </div>
+
+        }
+
     </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- SELECCIONAR JUGADOR -->
+    <!-- ===================================================== -->
+
+    <div class="player-selector">
+
+        <h2>Seleccionar jugador</h2>
+
+        <select
+            [(ngModel)]="jugadorSeleccionadoId"
+            (change)="seleccionarJugador()">
+
+            <option [ngValue]="null">
+                -- Seleccionar jugador --
+            </option>
+
+            @for (jugador of Jugadores; track jugador.id) {
+
+                <option [ngValue]="jugador.id">
+
+                    {{ jugador.apellido || '' }}
+                    {{ jugador.nombre || '' }}
+
+                    @if (jugador.dni) {
+                        - DNI {{ jugador.dni }}
+                    }
+
+                </option>
+
+            }
+
+        </select>
+
+    </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- TOKENS -->
+    <!-- ===================================================== -->
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Seleccionar
+                    </th>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Token
+                    </th>
+
+                    <th>
+                        Nombre
+                    </th>
+
+                    <th>
+                        Apellido
+                    </th>
+
+                    <th>
+                        DNI
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                <!-- ========================================= -->
+                <!-- CARGANDO -->
+                <!-- ========================================= -->
+
+                @if (cargando) {
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center">
+
+                            Cargando tokens...
+
+                        </td>
+
+                    </tr>
+
+                }
+
+
+                <!-- ========================================= -->
+                <!-- ERROR -->
+                <!-- ========================================= -->
+
+                @if (!cargando && error) {
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center">
+
+                            {{ error }}
+
+                        </td>
+
+                    </tr>
+
+                }
+
+
+                <!-- ========================================= -->
+                <!-- SIN TOKENS -->
+                <!-- ========================================= -->
+
+                @if (
+                    !cargando &&
+                    !error &&
+                    Tokens.length === 0
+                ) {
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="text-center">
+
+                            No hay tokens registrados.
+
+                        </td>
+
+                    </tr>
+
+                }
+
+
+                <!-- ========================================= -->
+                <!-- TOKENS -->
+                <!-- ========================================= -->
+
+                @if (
+                    !cargando &&
+                    !error &&
+                    Tokens.length > 0
+                ) {
+
+                    @for (
+                        token of Tokens;
+                        track token.id
+                    ) {
+
+                        <tr>
+
+                            <td>
+
+                                <input
+                                    type="checkbox"
+                                    [checked]="
+                                        tokensSeleccionados.has(token.id)
+                                    "
+                                    (change)="
+                                        seleccionarToken(
+                                            token.id,
+                                            $event
+                                        )
+                                    "
+                                    [disabled]="
+                                        jugadorSeleccionadoId === null
+                                    ">
+
+                            </td>
+
+
+                            <td>
+                                {{ token.id }}
+                            </td>
+
+
+                            <td>
+                                {{ token.codigo }}
+                            </td>
+
+
+                            <td>
+                                {{ token.nombre || '' }}
+                            </td>
+
+
+                            <td>
+                                {{ token.apellido || '' }}
+                            </td>
+
+
+                            <td>
+                                {{ token.dni || '' }}
+                            </td>
+
+                        </tr>
+
+                    }
+
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- ASIGNAR TOKENS -->
+    <!-- ===================================================== -->
+
+    <div class="assignment-container">
+
+        <button
+            class="w3-button"
+            type="button"
+            (click)="asignarTokens()"
+            [disabled]="
+                jugadorSeleccionadoId === null ||
+                tokensSeleccionados.size === 0 ||
+                asignandoTokens
+            ">
+
+            {{ asignandoTokens
+                ? 'Asignando...'
+                : 'Asignar tokens al jugador' }}
+
+        </button>
+
+
+        @if (jugadorSeleccionadoId !== null) {
+
+            <span class="selected-info">
+
+                Tokens seleccionados:
+                <strong>
+                    {{ tokensSeleccionados.size }}
+                </strong>
+
+            </span>
+
+        }
+
+    </div>
+
 </div>

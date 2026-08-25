@@ -28,12 +28,31 @@ public class TableroController : ControllerBase
     }
 
     [HttpGet("obtenerCartonesPorJugada/{numeroJugada}")]
-    public async Task<ActionResult<List<Carton>>> obtenerCartonesPorJugada(int numeroJugada)
+    public async Task<IActionResult> ObtenerCartonesPorJugada(int numeroJugada)
     {
-        return await _context.Cartones.Include(c => c.Numeros)
-                                      .Where(c => c.Jugada != null &&
-                                             c.Jugada.NumeroJugada == numeroJugada)
-                                      .ToListAsync();
+        var cartones = await _context.Cartones
+            .Where(c =>
+                c.Jugada != null &&
+                c.Jugada.NumeroJugada == numeroJugada &&
+                c.Token.Jugador != null
+            )
+            .Select(c => new
+            {
+                id = c.Id,
+
+                numeroJugada = c.Jugada!.NumeroJugada,
+
+                numeros = c.Numeros
+                    .Select(n => new
+                    {
+                        numero = n.Numero,
+                        nLinea = n.NLinea
+                    })
+                    .ToList()
+            })
+            .ToListAsync();
+
+        return Ok(cartones);
     }
 
     [HttpGet("obtenerFlagPorVariable/{variable}")]
