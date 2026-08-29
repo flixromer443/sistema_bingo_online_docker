@@ -791,6 +791,57 @@ public class AdminController : ControllerBase
             });
         }
     }
+
+    // =========================================================
+    // REINICIAR SORTEO
+    // =========================================================
+
+    [HttpPost("reiniciar-sorteo")]
+    public async Task<IActionResult> ReiniciarSorteo()
+    {
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // -------------------------------------------------
+            // 1. VACIAR LA TABLA USANDO ENTITY FRAMEWORK (Sin SQL crudo)
+            // -------------------------------------------------
+            var todosLosSorteados = await _context.NumerosSorteados.ToListAsync();
+            _context.NumerosSorteados.RemoveRange(todosLosSorteados);
+
+            // -------------------------------------------------
+            // 2. DESASOCIAR TODOS LOS TOKENS
+            // -------------------------------------------------
+            var tokensAsignados = await _context.Tokens
+                .Where(t => t.JugadorId != null)
+                .ToListAsync();
+
+            foreach (var token in tokensAsignados)
+            {
+                token.JugadorId = null;
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Sorteo reiniciado correctamente.",
+                tokensDesasociados = tokensAsignados.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "Error al reiniciar el sorteo.",
+                error = ex.Message
+            });
+        }
+    }
 }
 
 

@@ -116,4 +116,15 @@ export class AdminService {
 
   }
 
+  // =========================================================
+  // REINICIAR SORTEO
+  // =========================================================
+
+  reiniciarSorteo(): Observable<any> {
+    return this.http.post<any>(
+      this.apiAdmin + 'reiniciar-sorteo',
+      {}
+    );
+  }
+
 }
