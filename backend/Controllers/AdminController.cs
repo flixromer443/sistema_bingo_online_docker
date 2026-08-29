@@ -34,12 +34,16 @@ public class AdminController : ControllerBase
         try
         {
             var tokens = await _context.Tokens
-                .Include(t => t.Jugador)
                 .OrderBy(t => t.Id)
                 .Select(t => new
                 {
                     id = t.Id,
+
                     codigo = t.Codigo,
+
+                    // IMPORTANTE:
+                    // Devolvemos el ID del jugador
+                    jugadorId = t.JugadorId,
 
                     nombre = t.Jugador != null
                         ? t.Jugador.Nombre
@@ -54,6 +58,7 @@ public class AdminController : ControllerBase
                         : null
                 })
                 .ToListAsync();
+
 
             return Ok(new
             {
@@ -88,11 +93,15 @@ public class AdminController : ControllerBase
                 .Select(j => new
                 {
                     id = j.Id,
+
                     nombre = j.Nombre,
+
                     apellido = j.Apellido,
+
                     dni = j.Dni
                 })
                 .ToListAsync();
+
 
             return Ok(new
             {
@@ -126,6 +135,16 @@ public class AdminController : ControllerBase
             // VALIDACIONES
             // -------------------------------------------------
 
+            if (request == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "La información del jugador es obligatoria."
+                });
+            }
+
+
             if (string.IsNullOrWhiteSpace(request.Nombre))
             {
                 return BadRequest(new
@@ -135,6 +154,7 @@ public class AdminController : ControllerBase
                 });
             }
 
+
             if (string.IsNullOrWhiteSpace(request.Apellido))
             {
                 return BadRequest(new
@@ -143,6 +163,7 @@ public class AdminController : ControllerBase
                     message = "El apellido es obligatorio."
                 });
             }
+
 
             if (string.IsNullOrWhiteSpace(request.Dni))
             {
@@ -155,11 +176,29 @@ public class AdminController : ControllerBase
 
 
             // -------------------------------------------------
+            // NORMALIZAR DATOS
+            // -------------------------------------------------
+
+            var nombre =
+                request.Nombre.Trim();
+
+            var apellido =
+                request.Apellido.Trim();
+
+            var dni =
+                request.Dni.Trim();
+
+
+            // -------------------------------------------------
             // VERIFICAR DNI
             // -------------------------------------------------
 
-            var jugadorExistente = await _context.Jugadores
-                .FirstOrDefaultAsync(j => j.Dni == request.Dni);
+            var jugadorExistente =
+                await _context.Jugadores
+                    .FirstOrDefaultAsync(
+                        j => j.Dni == dni
+                    );
+
 
             if (jugadorExistente != null)
             {
@@ -177,12 +216,16 @@ public class AdminController : ControllerBase
 
             var jugador = new Jugador
             {
-                Nombre = request.Nombre.Trim(),
-                Apellido = request.Apellido.Trim(),
-                Dni = request.Dni.Trim(),
+                Nombre = nombre,
+
+                Apellido = apellido,
+
+                Dni = dni,
 
                 Telefono = null,
+
                 CorreoElectronico = null,
+
                 Alias = null
             };
 
@@ -199,12 +242,17 @@ public class AdminController : ControllerBase
             return Ok(new
             {
                 success = true,
+
                 message = "Jugador creado correctamente.",
+
                 data = new
                 {
                     id = jugador.Id,
+
                     nombre = jugador.Nombre,
+
                     apellido = jugador.Apellido,
+
                     dni = jugador.Dni
                 }
             });
@@ -214,7 +262,174 @@ public class AdminController : ControllerBase
             return StatusCode(500, new
             {
                 success = false,
+
                 message = "Error creando el jugador.",
+
+                error = ex.Message
+            });
+        }
+    }
+
+
+    // =========================================================
+    // ELIMINAR JUGADOR
+    // =========================================================
+
+    [HttpDelete("eliminarJugador/{jugadorId:int}")]
+    public async Task<IActionResult> EliminarJugador(
+        int jugadorId)
+    {
+        using var transaction =
+            await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            // -------------------------------------------------
+            // VALIDAR ID
+            // -------------------------------------------------
+
+            if (jugadorId <= 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "El ID del jugador no es válido."
+                });
+            }
+
+
+            // -------------------------------------------------
+            // BUSCAR JUGADOR
+            // -------------------------------------------------
+
+            var jugador =
+                await _context.Jugadores
+                    .FirstOrDefaultAsync(
+                        j => j.Id == jugadorId
+                    );
+
+
+            if (jugador == null)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = "El jugador no existe."
+                });
+            }
+
+
+            // -------------------------------------------------
+            // OBTENER TOKENS DEL JUGADOR
+            // -------------------------------------------------
+
+            var tokensJugador =
+                await _context.Tokens
+                    .Where(t => t.JugadorId == jugadorId)
+                    .ToListAsync();
+
+
+            // -------------------------------------------------
+            // DESASIGNAR TOKENS
+            // -------------------------------------------------
+
+            foreach (var token in tokensJugador)
+            {
+                token.JugadorId = null;
+
+                token.Jugador = null;
+            }
+
+
+            // -------------------------------------------------
+            // ELIMINAR JUGADOR
+            // -------------------------------------------------
+
+            _context.Jugadores.Remove(jugador);
+
+
+            // -------------------------------------------------
+            // GUARDAR CAMBIOS
+            // -------------------------------------------------
+
+            var cambios =
+                await _context.SaveChangesAsync();
+
+
+            // -------------------------------------------------
+            // CONFIRMAR TRANSACCIÓN
+            // -------------------------------------------------
+
+            await transaction.CommitAsync();
+
+
+            Console.WriteLine(
+                $"Jugador eliminado: {jugador.Id} - " +
+                $"{jugador.Nombre} {jugador.Apellido}"
+            );
+
+            Console.WriteLine(
+                $"Tokens desasignados: {tokensJugador.Count}"
+            );
+
+            Console.WriteLine(
+                $"Cambios guardados: {cambios}"
+            );
+
+
+            // -------------------------------------------------
+            // RESPUESTA
+            // -------------------------------------------------
+
+            return Ok(new
+            {
+                success = true,
+
+                message =
+                    "Jugador eliminado correctamente.",
+
+                data = new
+                {
+                    jugadorId = jugadorId,
+
+                    nombre = jugador.Nombre,
+
+                    apellido = jugador.Apellido,
+
+                    tokensDesasignados =
+                        tokensJugador
+                            .Select(t => t.Id)
+                            .ToList(),
+
+                    cantidadTokensDesasignados =
+                        tokensJugador.Count,
+
+                    cambiosGuardados =
+                        cambios
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            // -------------------------------------------------
+            // ROLLBACK
+            // -------------------------------------------------
+
+            await transaction.RollbackAsync();
+
+
+            Console.WriteLine(
+                $"ERROR ELIMINANDO JUGADOR: {ex}"
+            );
+
+
+            return StatusCode(500, new
+            {
+                success = false,
+
+                message =
+                    "Error eliminando el jugador.",
+
                 error = ex.Message
             });
         }
@@ -232,11 +447,29 @@ public class AdminController : ControllerBase
         try
         {
             // -------------------------------------------------
+            // VALIDAR REQUEST
+            // -------------------------------------------------
+
+            if (request == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "La información es obligatoria."
+                });
+            }
+
+
+            // -------------------------------------------------
             // VALIDAR JUGADOR
             // -------------------------------------------------
 
-            var jugador = await _context.Jugadores
-                .FirstOrDefaultAsync(j => j.Id == request.JugadorId);
+            var jugador =
+                await _context.Jugadores
+                    .FirstOrDefaultAsync(
+                        j => j.Id == request.JugadorId
+                    );
+
 
             if (jugador == null)
             {
@@ -252,8 +485,10 @@ public class AdminController : ControllerBase
             // VALIDAR TOKENS
             // -------------------------------------------------
 
-            if (request.Tokens == null ||
-                request.Tokens.Count == 0)
+            if (
+                request.Tokens == null ||
+                request.Tokens.Count == 0
+            )
             {
                 return BadRequest(new
                 {
@@ -264,32 +499,55 @@ public class AdminController : ControllerBase
 
 
             // -------------------------------------------------
+            // ELIMINAR IDs DUPLICADOS
+            // -------------------------------------------------
+
+            var idsTokens =
+                request.Tokens
+                    .Distinct()
+                    .ToList();
+
+
+            // -------------------------------------------------
             // OBTENER TOKENS
             // -------------------------------------------------
 
-            var tokens = await _context.Tokens
-                .Where(t => request.Tokens.Contains(t.Id))
-                .ToListAsync();
+            var tokens =
+                await _context.Tokens
+                    .Where(
+                        t => idsTokens.Contains(t.Id)
+                    )
+                    .ToListAsync();
 
 
             // -------------------------------------------------
-            // VERIFICAR QUE EXISTAN TODOS
+            // VERIFICAR EXISTENCIA
             // -------------------------------------------------
 
             var tokensEncontrados =
-                tokens.Select(t => t.Id).ToHashSet();
+                tokens
+                    .Select(t => t.Id)
+                    .ToHashSet();
+
 
             var tokensNoEncontrados =
-                request.Tokens
-                    .Where(id => !tokensEncontrados.Contains(id))
+                idsTokens
+                    .Where(
+                        id =>
+                            !tokensEncontrados.Contains(id)
+                    )
                     .ToList();
+
 
             if (tokensNoEncontrados.Count > 0)
             {
                 return BadRequest(new
                 {
                     success = false,
-                    message = "Uno o más tokens no existen.",
+
+                    message =
+                        "Uno o más tokens no existen.",
+
                     tokensNoEncontrados
                 });
             }
@@ -299,19 +557,26 @@ public class AdminController : ControllerBase
             // VERIFICAR TOKENS YA ASIGNADOS
             // -------------------------------------------------
 
-            var tokensYaAsignados = tokens
-                .Where(t => t.Jugador != null &&
-                            t.Jugador.Id != jugador.Id)
-                .Select(t => t.Id)
-                .ToList();
+            var tokensYaAsignados =
+                tokens
+                    .Where(
+                        t =>
+                            t.JugadorId.HasValue &&
+                            t.JugadorId.Value != jugador.Id
+                    )
+                    .Select(t => t.Id)
+                    .ToList();
+
 
             if (tokensYaAsignados.Count > 0)
             {
                 return BadRequest(new
                 {
                     success = false,
+
                     message =
                         "Uno o más tokens ya están asignados a otro jugador.",
+
                     tokensYaAsignados
                 });
             }
@@ -323,9 +588,14 @@ public class AdminController : ControllerBase
 
             foreach (var token in tokens)
             {
-                token.Jugador = jugador;
+                token.JugadorId =
+                    jugador.Id;
             }
 
+
+            // -------------------------------------------------
+            // GUARDAR
+            // -------------------------------------------------
 
             await _context.SaveChangesAsync();
 
@@ -337,11 +607,19 @@ public class AdminController : ControllerBase
             return Ok(new
             {
                 success = true,
-                message = "Tokens asociados correctamente.",
+
+                message =
+                    "Tokens asociados correctamente.",
+
                 data = new
                 {
-                    jugadorId = jugador.Id,
-                    tokens = tokens.Select(t => t.Id).ToList()
+                    jugadorId =
+                        jugador.Id,
+
+                    tokens =
+                        tokens
+                            .Select(t => t.Id)
+                            .ToList()
                 }
             });
         }
@@ -350,11 +628,15 @@ public class AdminController : ControllerBase
             return StatusCode(500, new
             {
                 success = false,
-                message = "Error asociando los tokens.",
+
+                message =
+                    "Error asociando los tokens.",
+
                 error = ex.Message
             });
         }
     }
+
 
     // =========================================================
     // DESASIGNAR TOKENS DE JUGADOR
@@ -362,7 +644,7 @@ public class AdminController : ControllerBase
 
     [HttpPost("desasignarTokensJugador")]
     public async Task<IActionResult> DesasignarTokensJugador(
-    [FromBody] DesasignarTokensJugadorRequest request)
+        [FromBody] DesasignarTokensJugadorRequest request)
     {
         try
         {
@@ -370,8 +652,11 @@ public class AdminController : ControllerBase
             // VALIDAR TOKENS
             // -------------------------------------------------
 
-            if (request.Tokens == null ||
-                request.Tokens.Count == 0)
+            if (
+                request == null ||
+                request.Tokens == null ||
+                request.Tokens.Count == 0
+            )
             {
                 return BadRequest(new
                 {
@@ -382,32 +667,55 @@ public class AdminController : ControllerBase
 
 
             // -------------------------------------------------
+            // ELIMINAR DUPLICADOS
+            // -------------------------------------------------
+
+            var idsTokens =
+                request.Tokens
+                    .Distinct()
+                    .ToList();
+
+
+            // -------------------------------------------------
             // OBTENER TOKENS
             // -------------------------------------------------
 
-            var tokens = await _context.Tokens
-                .Where(t => request.Tokens.Contains(t.Id))
-                .ToListAsync();
+            var tokens =
+                await _context.Tokens
+                    .Where(
+                        t => idsTokens.Contains(t.Id)
+                    )
+                    .ToListAsync();
 
 
             // -------------------------------------------------
-            // VERIFICAR QUE EXISTAN TODOS
+            // VERIFICAR EXISTENCIA
             // -------------------------------------------------
 
-            var tokensEncontrados = tokens
-                .Select(t => t.Id)
-                .ToHashSet();
+            var tokensEncontrados =
+                tokens
+                    .Select(t => t.Id)
+                    .ToHashSet();
 
-            var tokensNoEncontrados = request.Tokens
-                .Where(id => !tokensEncontrados.Contains(id))
-                .ToList();
+
+            var tokensNoEncontrados =
+                idsTokens
+                    .Where(
+                        id =>
+                            !tokensEncontrados.Contains(id)
+                    )
+                    .ToList();
+
 
             if (tokensNoEncontrados.Count > 0)
             {
                 return BadRequest(new
                 {
                     success = false,
-                    message = "Uno o más tokens no existen.",
+
+                    message =
+                        "Uno o más tokens no existen.",
+
                     tokensNoEncontrados
                 });
             }
@@ -420,6 +728,7 @@ public class AdminController : ControllerBase
             foreach (var token in tokens)
             {
                 token.JugadorId = null;
+
                 token.Jugador = null;
             }
 
@@ -428,7 +737,8 @@ public class AdminController : ControllerBase
             // GUARDAR
             // -------------------------------------------------
 
-            var cambios = await _context.SaveChangesAsync();
+            var cambios =
+                await _context.SaveChangesAsync();
 
 
             Console.WriteLine(
@@ -440,14 +750,26 @@ public class AdminController : ControllerBase
             );
 
 
+            // -------------------------------------------------
+            // RESPUESTA
+            // -------------------------------------------------
+
             return Ok(new
             {
                 success = true,
-                message = "Tokens desasignados correctamente.",
+
+                message =
+                    "Tokens desasignados correctamente.",
+
                 data = new
                 {
-                    tokens = tokens.Select(t => t.Id).ToList(),
-                    cambiosGuardados = cambios
+                    tokens =
+                        tokens
+                            .Select(t => t.Id)
+                            .ToList(),
+
+                    cambiosGuardados =
+                        cambios
                 }
             });
         }
@@ -457,10 +779,14 @@ public class AdminController : ControllerBase
                 $"ERROR DESASIGNANDO TOKENS: {ex}"
             );
 
+
             return StatusCode(500, new
             {
                 success = false,
-                message = "Error desasignando los tokens.",
+
+                message =
+                    "Error desasignando los tokens.",
+
                 error = ex.Message
             });
         }
@@ -492,6 +818,7 @@ public class AsociarTokensJugadorRequest
 
     public List<int> Tokens { get; set; } = new();
 }
+
 
 // =============================================================
 // REQUEST DESASIGNAR TOKENS

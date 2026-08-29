@@ -1,20 +1,81 @@
-<!-- NavBar -->
-<div class="navbar">
-  <p>Sistema Bingo Online</p>
-  <button routerLink="" class="w3-button"><i class="fa fa-home"></i> Home</button>
-  <button routerLink="tabla" class="w3-button"><i class="fa fa-table"></i> Carga Jugadores</button>
-  <button routerLink="crear" class="w3-button"><i class="fa fa-plus"></i> Carga Datos Sorteo</button>
-</div>
+<!-- NAVBAR -->
+<nav class="navbar">
 
-<!-- Content -->
-<div class="background" id="home">
-<router-outlet />
-<br>
-</div>
+  <!-- LOGO / TÍTULO -->
+  <div class="navbar-brand">
+    <i class="fa fa-ticket"></i>
+    <span>Sistema Bingo Online</span>
+  </div>
 
-<!-- Footer -->
+  <!-- MENÚ -->
+  <div class="navbar-menu">
+
+    <button
+      routerLink=""
+      routerLinkActive="activo"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="nav-button"
+    >
+      <i class="fa fa-home"></i>
+      <span>Home</span>
+    </button>
+
+    <button
+      routerLink="tabla"
+      routerLinkActive="activo"
+      class="nav-button"
+    >
+      <i class="fa fa-table"></i>
+      <span>Carga Jugadores</span>
+    </button>
+
+    <button
+      routerLink="crear"
+      routerLinkActive="activo"
+      class="nav-button"
+    >
+      <i class="fa fa-plus"></i>
+      <span>Carga Datos Sorteo</span>
+    </button>
+
+  </div>
+
+</nav>
+
+
+<!-- CONTENT -->
+<main
+  class="background"
+  id="home"
+>
+
+  <div class="contenido">
+
+    <router-outlet></router-outlet>
+
+  </div>
+
+</main>
+
+
+<!-- FOOTER -->
 <footer>
-  <a href="  http://localhost:5214/swagger/index.html" Target="_blank">
-    <button class="w3-button"><i class="fa fa-cloud"></i> Swagger</button>
+
+  <a
+    href="http://localhost:5214/swagger/index.html"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="swagger-link"
+  >
+
+    <button class="swagger-button">
+
+      <i class="fa fa-cloud"></i>
+
+      <span>Swagger API</span>
+
+    </button>
+
   </a>
+
 </footer>
