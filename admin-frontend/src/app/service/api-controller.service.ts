@@ -9,8 +9,8 @@ import { Global } from './global';
   providedIn: 'root'
 })
 export class ApiControllerService {
-  private apiGetList = Global.apiAuth;
-  private apiGetUser = Global.apiAuth; //es la misma ruta para eliminar, modificar y buscar
+  private apiGetList = Global.apiAdmin;
+  private apiGetUser = Global.apiAdmin; //es la misma ruta para eliminar, modificar y buscar
   
   //private apiGetList = 'http://localhost:5214/api/Users';
   //private apiGetUser = 'http://localhost:5214/api/Users/'; //es la misma ruta para eliminar, modificar y buscar

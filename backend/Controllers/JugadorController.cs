@@ -30,7 +30,7 @@ public class JugadorController : ControllerBase
 
     [HttpPost("validar-codigo")]
     public async Task<IActionResult> ValidarCodigo(
-        [FromBody] ValidarCodigoRequest request)
+    [FromBody] ValidarCodigoRequest request)
     {
         // -----------------------------------------------------
         // Validar código
@@ -45,31 +45,44 @@ public class JugadorController : ControllerBase
             });
         }
 
+        // -----------------------------------------------------
+        // BUSCAR TOKEN
+        // -----------------------------------------------------
+
+        var token = await _context.Tokens
+            .Include(t => t.Jugador)
+            .FirstOrDefaultAsync(t => t.Codigo == request.Codigo);
+
+        if (token == null)
+        {
+            return NotFound(new
+            {
+                success = false,
+                message = "El código ingresado no existe."
+            });
+        }
 
         // -----------------------------------------------------
-        // CÓDIGO DE PRUEBA
+        // VALIDAR JUGADOR ASOCIADO
         // -----------------------------------------------------
 
-        /*if (request.Codigo != "111111")
+        if (token.Jugador == null)
         {
             return BadRequest(new
             {
                 success = false,
-                message = "El código ingresado no es válido."
+                message = "El token no está asignado a ningún jugador."
             });
-        }*/
-
+        }
 
         // -----------------------------------------------------
-        // OBTENER 6 CARTONES ALEATORIOS
+        // OBTENER CARTONES DEL TOKEN
         // -----------------------------------------------------
 
         var cartones = await _context.Cartones
             .Include(c => c.Jugada)
             .Include(c => c.Numeros)
-            //.OrderBy(c => Guid.NewGuid())
-            //.Take(6)
-
+            .Include(c => c.Token)
             .Where(c => c.Token.Codigo == request.Codigo)
             .Select(c => new
             {
@@ -89,11 +102,6 @@ public class JugadorController : ControllerBase
             })
             .ToListAsync();
 
-
-        // -----------------------------------------------------
-        // VALIDAR CARTONES
-        // -----------------------------------------------------
-
         if (cartones.Count == 0)
         {
             return NotFound(new
@@ -103,7 +111,6 @@ public class JugadorController : ControllerBase
             });
         }
 
-
         // -----------------------------------------------------
         // RESPUESTA
         // -----------------------------------------------------
@@ -111,11 +118,16 @@ public class JugadorController : ControllerBase
         return Ok(new
         {
             success = true,
-
             message = "Código verificado correctamente.",
-
             data = new
             {
+                /*jugador = new
+                {
+                    id = token.Jugador.Id,
+                    nombre = token.Jugador.Nombre,
+                    apellido = token.Jugador.Apellido,
+                    dni = token.Jugador.Dni
+                },*/
                 cartones
             }
         });

@@ -9,7 +9,10 @@
                 <input type="number" placeholder="Mayor de 18 años" [(ngModel)]="edad">
             </div>
             <div class="buttons">
-                <button class="w3-button" (click)="crearUsuario()" >Agregar <i class="fa fa-plus"></i> </button>
+                <button class="w3-button" (click)="crearUsuario()">Agregar <i class="fa fa-plus"></i></button>
+                <button class="w3-button w3-red w3-hover-dark-gray" (click)="confirmarReiniciarSorteo()">
+                    Reiniciar Sorteo <i class="fa fa-refresh"></i>
+                </button>
             </div>
         </div>
     </div>

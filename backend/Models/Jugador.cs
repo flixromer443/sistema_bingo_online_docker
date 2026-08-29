@@ -19,6 +19,7 @@ namespace Slamdunk.WebApi.Models
 
         public Jugador()
         {
+            Tokens = new List<Token>();
         }
 
         public Jugador(int id, string nombre, string apellido, string dni, string telefono, string correoElectronico, string alias, List<Token> tokens)

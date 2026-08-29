@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Slamdunk.WebApi.Models;
+using System.Reflection.Emit;
 
 namespace Data
 {
@@ -22,5 +23,16 @@ namespace Data
         public DbSet<Tbl1DtsVariables> Tbl1DtsVariables { get; set; }
         public DbSet<NumeroSorteado> NumerosSorteados { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Token>()
+                .HasOne(t => t.Jugador)
+                .WithMany(j => j.Tokens)
+                .HasForeignKey(t => t.JugadorId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
     }
 }
