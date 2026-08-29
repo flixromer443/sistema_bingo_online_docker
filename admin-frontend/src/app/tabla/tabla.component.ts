@@ -74,17 +74,26 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // TOKENS QUE SE MUESTRAN EN LA TABLA
+  // TOKENS
   // =========================================================
 
+  // Todos los tokens que se están administrando
   Tokens: TokenJugador[] = [];
 
 
+  // Tokens que se muestran luego de aplicar la búsqueda
+  TokensFiltrados: TokenJugador[] = [];
+
+
+  // Todos los tokens recibidos desde el backend
+  private todosLosTokens: TokenJugador[] = [];
+
+
   // =========================================================
-  // TODOS LOS TOKENS
+  // BUSCADOR
   // =========================================================
 
-  private todosLosTokens: TokenJugador[] = [];
+  busquedaToken: string = '';
 
 
   // =========================================================
@@ -197,6 +206,8 @@ export class TablaComponent implements OnInit {
 
             this.Tokens = [];
 
+            this.TokensFiltrados = [];
+
             this.todosLosTokens = [];
 
             this.error =
@@ -207,6 +218,10 @@ export class TablaComponent implements OnInit {
 
           }
 
+
+          // =================================================
+          // GUARDAR TODOS LOS TOKENS
+          // =================================================
 
           this.todosLosTokens =
             response.data ?? [];
@@ -219,8 +234,7 @@ export class TablaComponent implements OnInit {
 
 
           // =================================================
-          // IMPORTANTE:
-          // SIEMPRE MOSTRAMOS TODOS LOS TOKENS
+          // MOSTRAR TOKENS
           // =================================================
 
           this.mostrarTodosLosTokens();
@@ -238,6 +252,8 @@ export class TablaComponent implements OnInit {
           this.cargando = false;
 
           this.Tokens = [];
+
+          this.TokensFiltrados = [];
 
           this.todosLosTokens = [];
 
@@ -439,6 +455,8 @@ export class TablaComponent implements OnInit {
 
             this.tokensSeleccionados.clear();
 
+            this.busquedaToken = '';
+
             this.mostrarTodosLosTokens();
 
           }
@@ -490,6 +508,8 @@ export class TablaComponent implements OnInit {
 
     this.errorJugador = '';
 
+    this.busquedaToken = '';
+
 
     // -------------------------------------------------------
     // MOSTRAR TODOS LOS TOKENS
@@ -510,9 +530,13 @@ export class TablaComponent implements OnInit {
     // SIN JUGADOR SELECCIONADO
     // -------------------------------------------------------
 
-    if (this.jugadorSeleccionadoId === null) {
+    if (
+      this.jugadorSeleccionadoId === null
+    ) {
 
       this.Tokens = [];
+
+      this.TokensFiltrados = [];
 
       return;
 
@@ -520,7 +544,7 @@ export class TablaComponent implements OnInit {
 
 
     // -------------------------------------------------------
-    // MOSTRAR TODOS
+    // COPIAR TODOS LOS TOKENS
     // -------------------------------------------------------
 
     this.Tokens = [
@@ -528,10 +552,119 @@ export class TablaComponent implements OnInit {
     ];
 
 
+    // -------------------------------------------------------
+    // APLICAR FILTRO
+    // -------------------------------------------------------
+
+    this.filtrarTokens();
+
+
     console.log(
-      'MOSTRANDO TODOS LOS TOKENS:',
-      this.Tokens
+      'TOKENS MOSTRADOS:',
+      this.TokensFiltrados
     );
+
+  }
+
+
+  // =========================================================
+  // FILTRAR TOKENS
+  // =========================================================
+  //
+  // SE EJECUTA CADA VEZ QUE EL USUARIO ESCRIBE.
+  //
+  // Busca por:
+  //
+  // ID:
+  // 1
+  // 25
+  // 100
+  //
+  // CÓDIGO:
+  // TOKEN001
+  // TOKEN0025
+  //
+  // =========================================================
+
+  filtrarTokens(): void {
+
+    // -------------------------------------------------------
+    // SI NO HAY BÚSQUEDA
+    // -------------------------------------------------------
+
+    const texto =
+      (this.busquedaToken ?? '').trim();
+
+
+    if (!texto) {
+
+      this.TokensFiltrados = [
+        ...this.Tokens
+      ];
+
+      return;
+
+    }
+
+
+    // -------------------------------------------------------
+    // NORMALIZAR BÚSQUEDA
+    // -------------------------------------------------------
+
+    const busqueda =
+      texto.toLowerCase();
+
+
+    // -------------------------------------------------------
+    // FILTRAR
+    // -------------------------------------------------------
+
+    this.TokensFiltrados =
+      this.Tokens.filter(
+        token => {
+
+          const id =
+            String(token.id ?? '')
+              .toLowerCase();
+
+
+          const codigo =
+            String(token.codigo ?? '')
+              .toLowerCase();
+
+
+          return (
+            id.includes(busqueda) ||
+            codigo.includes(busqueda)
+          );
+
+        }
+      );
+
+
+    console.log(
+      'BUSQUEDA:',
+      busqueda
+    );
+
+
+    console.log(
+      'TOKENS FILTRADOS:',
+      this.TokensFiltrados
+    );
+
+  }
+
+
+  // =========================================================
+  // LIMPIAR BÚSQUEDA
+  // =========================================================
+
+  limpiarBusquedaToken(): void {
+
+    this.busquedaToken = '';
+
+    this.filtrarTokens();
 
   }
 
@@ -596,23 +729,39 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // SELECCIONAR TODOS
+  // SELECCIONAR TODOS LOS TOKENS VISIBLES
   // =========================================================
 
   seleccionarTodos(
     seleccionado: boolean
   ): void {
 
+    // -------------------------------------------------------
+    // DESELECCIONAR LOS VISIBLES
+    // -------------------------------------------------------
+
     if (!seleccionado) {
 
-      this.tokensSeleccionados.clear();
+      this.TokensFiltrados.forEach(
+        token => {
+
+          this.tokensSeleccionados.delete(
+            token.id
+          );
+
+        }
+      );
 
       return;
 
     }
 
 
-    this.Tokens.forEach(
+    // -------------------------------------------------------
+    // SELECCIONAR LOS VISIBLES
+    // -------------------------------------------------------
+
+    this.TokensFiltrados.forEach(
       token => {
 
         this.tokensSeleccionados.add(
@@ -624,10 +773,59 @@ export class TablaComponent implements OnInit {
 
 
     console.log(
-      'TODOS LOS TOKENS SELECCIONADOS:',
+      'TOKENS VISIBLES SELECCIONADOS:',
       Array.from(
         this.tokensSeleccionados
       )
+    );
+
+  }
+
+
+  // =========================================================
+  // VERIFICAR SI TODOS LOS TOKENS VISIBLES ESTÁN SELECCIONADOS
+  // =========================================================
+
+  todosTokensFiltradosSeleccionados(): boolean {
+
+    if (
+      this.TokensFiltrados.length === 0
+    ) {
+
+      return false;
+
+    }
+
+
+    return this.TokensFiltrados.every(
+      token =>
+        this.tokensSeleccionados.has(
+          token.id
+        )
+    );
+
+  }
+
+
+  // =========================================================
+  // VERIFICAR SI HAY SELECCIÓN PARCIAL
+  // =========================================================
+
+  haySeleccionParcial(): boolean {
+
+    const seleccionadosVisibles =
+      this.TokensFiltrados.filter(
+        token =>
+          this.tokensSeleccionados.has(
+            token.id
+          )
+      ).length;
+
+
+    return (
+      seleccionadosVisibles > 0 &&
+      seleccionadosVisibles <
+        this.TokensFiltrados.length
     );
 
   }
@@ -661,7 +859,7 @@ export class TablaComponent implements OnInit {
 
 
     // -------------------------------------------------------
-    // NO PERMITIR ASIGNAR A "SIN ASIGNAR"
+    // NO PERMITIR ASIGNAR A SIN ASIGNAR
     // -------------------------------------------------------
 
     if (
@@ -805,7 +1003,7 @@ export class TablaComponent implements OnInit {
 
 
     // -------------------------------------------------------
-    // VALIDAR QUE ESTEMOS EN SIN ASIGNAR
+    // VALIDAR MODO
     // -------------------------------------------------------
 
     if (
