@@ -154,18 +154,17 @@
           *ngFor="let jugador of Jugadores"
           [ngValue]="jugador.id"
         >
+
           {{ jugador.nombre }}
           {{ jugador.apellido }}
           - DNI {{ jugador.dni }}
+
         </option>
 
       </select>
 
 
-      <!-- ================================================= -->
       <!-- BOTÓN ELIMINAR JUGADOR -->
-      <!-- ================================================= -->
-
       <button
         type="button"
         class="btn btn-eliminar-jugador"
@@ -195,7 +194,9 @@
       *ngIf="mensajeEliminarJugador"
       class="mensaje mensaje-exito"
     >
+
       {{ mensajeEliminarJugador }}
+
     </div>
 
 
@@ -204,7 +205,9 @@
       *ngIf="errorEliminarJugador"
       class="mensaje mensaje-error"
     >
+
       {{ errorEliminarJugador }}
+
     </div>
 
   </div>
@@ -216,6 +219,7 @@
 
   <div class="card tabla-card">
 
+
     <!-- =================================================== -->
     <!-- HEADER -->
     <!-- =================================================== -->
@@ -224,7 +228,9 @@
 
       <div>
 
-        <h2>Tokens</h2>
+        <h2>
+          Tokens
+        </h2>
 
 
         <!-- NINGÚN JUGADOR -->
@@ -232,7 +238,9 @@
           *ngIf="jugadorSeleccionadoId === null"
           class="subtitulo"
         >
+
           Seleccioná un jugador o "SIN ASIGNAR".
+
         </p>
 
 
@@ -241,8 +249,10 @@
           *ngIf="jugadorSeleccionadoId === 0"
           class="subtitulo"
         >
+
           Mostrando todos los tokens. Podés seleccionar tokens
           para desasignarlos.
+
         </p>
 
 
@@ -254,8 +264,10 @@
           "
           class="subtitulo"
         >
+
           Mostrando todos los tokens. Podés seleccionar los que
           quieras para asignarlos a este jugador.
+
         </p>
 
       </div>
@@ -266,58 +278,109 @@
         *ngIf="cargando"
         class="cargando"
       >
+
         Cargando tokens...
+
       </div>
 
     </div>
 
 
     <!-- =================================================== -->
-    <!-- BUSCADOR DE TOKENS -->
+    <!-- BUSCADOR + FILTRO ESTADO -->
     <!-- =================================================== -->
 
     <div
-      class="buscador-token"
+      class="filtros-tokens"
       *ngIf="jugadorSeleccionadoId !== null"
     >
 
-      <label for="busquedaToken">
-        Buscar token
-      </label>
 
-      <div class="buscador-token-input">
+      <!-- ================================================= -->
+      <!-- BUSCADOR -->
+      <!-- ================================================= -->
 
-        <input
-          id="busquedaToken"
-          type="text"
-          inputmode="numeric"
-          [(ngModel)]="busquedaToken"
-          (ngModelChange)="filtrarTokens()"
-          placeholder="Ingresá el número del token..."
-          autocomplete="off"
-        >
+      <div class="buscador-token">
 
-        <button
-          type="button"
-          class="btn-limpiar-busqueda"
+        <label for="busquedaToken">
+          Buscar token
+        </label>
+
+        <div class="buscador-token-input">
+
+          <input
+            id="busquedaToken"
+            type="text"
+            inputmode="numeric"
+            [(ngModel)]="busquedaToken"
+            (ngModelChange)="filtrarTokens()"
+            placeholder="Ingresá el número del token..."
+            autocomplete="off"
+          >
+
+
+          <!-- BOTÓN LIMPIAR -->
+          <button
+            type="button"
+            class="btn-limpiar-busqueda"
+            *ngIf="busquedaToken"
+            (click)="limpiarBusquedaToken()"
+            title="Limpiar búsqueda"
+          >
+
+            ✕
+
+          </button>
+
+        </div>
+
+
+        <!-- CANTIDAD ENCONTRADA -->
+        <span
+          class="resultado-busqueda"
           *ngIf="busquedaToken"
-          (click)="limpiarBusquedaToken()"
-          title="Limpiar búsqueda"
         >
-          ✕
-        </button>
+
+          {{ TokensFiltrados.length }}
+          token(s) encontrado(s)
+
+        </span>
 
       </div>
 
 
-      <!-- CANTIDAD ENCONTRADA -->
-      <span
-        class="resultado-busqueda"
-        *ngIf="busquedaToken"
-      >
-        {{ TokensFiltrados.length }}
-        token(s) encontrado(s)
-      </span>
+      <!-- ================================================= -->
+      <!-- FILTRO DE ESTADO -->
+      <!-- ================================================= -->
+
+      <div class="filtro-estado">
+
+        <label for="filtroEstado">
+          Estado
+        </label>
+
+        <select
+          id="filtroEstado"
+          class="select-estado"
+          [(ngModel)]="filtroEstado"
+          (ngModelChange)="cambiarFiltroEstado()"
+        >
+
+          <option value="todos">
+            Todos
+          </option>
+
+          <option value="asignados">
+            Asignados
+          </option>
+
+          <option value="sin-asignar">
+            Sin asignar
+          </option>
+
+        </select>
+
+      </div>
 
     </div>
 
@@ -330,7 +393,9 @@
       *ngIf="error"
       class="mensaje mensaje-error"
     >
+
       {{ error }}
+
     </div>
 
 
@@ -351,26 +416,21 @@
 
               <input
                 type="checkbox"
-
                 [checked]="
                   todosTokensFiltradosSeleccionados()
                 "
-
                 [indeterminate]="
                   haySeleccionParcial()
                 "
-
                 (change)="
                   seleccionarTodos(
                     $any($event.target).checked
                   )
                 "
-
                 [disabled]="
                   jugadorSeleccionadoId === null ||
                   TokensFiltrados.length === 0
                 "
-
                 title="Seleccionar todos los tokens visibles"
               >
 
@@ -421,21 +481,31 @@
 
 
           <!-- ================================================= -->
-          <!-- TOKENS FILTRADOS -->
+          <!-- TOKENS -->
           <!-- ================================================= -->
 
           <tr
             *ngFor="let token of TokensFiltrados"
           >
 
+
             <!-- CHECKBOX -->
             <td class="col-seleccionar">
 
               <input
                 type="checkbox"
-                [checked]="tokenSeleccionado(token.id)"
-                (change)="seleccionarToken(token.id, $event)"
-                [disabled]="jugadorSeleccionadoId === null"
+                [checked]="
+                  tokenSeleccionado(token.id)
+                "
+                (change)="
+                  seleccionarToken(
+                    token.id,
+                    $event
+                  )
+                "
+                [disabled]="
+                  jugadorSeleccionadoId === null
+                "
               >
 
             </td>
@@ -447,7 +517,7 @@
             </td>
 
 
-            <!-- CODIGO TOKEN -->
+            <!-- TOKEN -->
             <td class="token-codigo">
 
               <strong>
@@ -460,9 +530,7 @@
             <!-- NOMBRE -->
             <td>
 
-              <span
-                *ngIf="token.nombre"
-              >
+              <span *ngIf="token.nombre">
                 {{ token.nombre }}
               </span>
 
@@ -479,9 +547,7 @@
             <!-- APELLIDO -->
             <td>
 
-              <span
-                *ngIf="token.apellido"
-              >
+              <span *ngIf="token.apellido">
                 {{ token.apellido }}
               </span>
 
@@ -498,9 +564,7 @@
             <!-- DNI -->
             <td>
 
-              <span
-                *ngIf="token.dni"
-              >
+              <span *ngIf="token.dni">
                 {{ token.dni }}
               </span>
 
@@ -522,7 +586,6 @@
 
 
               <!-- SIN ASIGNAR -->
-
               <span
                 *ngIf="
                   token.jugadorId === null ||
@@ -542,7 +605,6 @@
 
 
               <!-- ASIGNADO -->
-
               <span
                 *ngIf="
                   token.jugadorId !== null &&
@@ -566,7 +628,7 @@
 
 
           <!-- ================================================= -->
-          <!-- SIN RESULTADOS DE BÚSQUEDA -->
+          <!-- SIN RESULTADOS -->
           <!-- ================================================= -->
 
           <tr
@@ -574,7 +636,10 @@
               !cargando &&
               jugadorSeleccionadoId !== null &&
               TokensFiltrados.length === 0 &&
-              busquedaToken
+              (
+                busquedaToken ||
+                filtroEstado !== 'todos'
+              )
             "
           >
 
@@ -583,11 +648,7 @@
               class="sin-tokens"
             >
 
-              No se encontró ningún token con el número:
-
-              <strong>
-                {{ busquedaToken }}
-              </strong>
+              No hay tokens que coincidan con los filtros seleccionados.
 
             </td>
 
@@ -611,20 +672,22 @@
             >
 
               <!-- NINGÚN JUGADOR -->
-
               <span
                 *ngIf="jugadorSeleccionadoId === null"
               >
+
                 Seleccioná un jugador para comenzar.
+
               </span>
 
 
               <!-- SIN TOKENS -->
-
               <span
                 *ngIf="jugadorSeleccionadoId !== null"
               >
+
                 No hay tokens registrados.
+
               </span>
 
             </td>
@@ -674,7 +737,6 @@
 
 
       <!-- CONTADOR -->
-
       <div class="contador">
 
         Tokens seleccionados:
@@ -692,13 +754,9 @@
 
       <button
         *ngIf="jugadorSeleccionadoId !== 0"
-
         type="button"
-
         class="btn btn-asignar"
-
         (click)="asignarTokens()"
-
         [disabled]="
           tokensSeleccionados.size === 0 ||
           asignandoTokens ||
@@ -727,13 +785,9 @@
 
       <button
         *ngIf="jugadorSeleccionadoId === 0"
-
         type="button"
-
         class="btn btn-desasignar"
-
         (click)="desasignarTokens()"
-
         [disabled]="
           tokensSeleccionados.size === 0 ||
           desasignandoTokens ||

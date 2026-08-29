@@ -1,16 +1,19 @@
-// =========================================================
-// IMPORTS
-// =========================================================
-
 import {
   Component,
   OnInit
 } from '@angular/core';
 
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  CommonModule
+} from '@angular/common';
 
-import { AdminService } from '../service/admin.service';
+import {
+  FormsModule
+} from '@angular/forms';
+
+import {
+  AdminService
+} from '../service/admin.service';
 
 
 // =========================================================
@@ -81,15 +84,10 @@ export class TablaComponent implements OnInit {
   // TOKENS
   // =========================================================
 
-  // Todos los tokens que se están administrando
   Tokens: TokenJugador[] = [];
 
-
-  // Tokens que se muestran luego de aplicar la búsqueda
   TokensFiltrados: TokenJugador[] = [];
 
-
-  // Todos los tokens recibidos desde el backend
   private todosLosTokens: TokenJugador[] = [];
 
 
@@ -98,6 +96,17 @@ export class TablaComponent implements OnInit {
   // =========================================================
 
   busquedaToken: string = '';
+
+
+  // =========================================================
+  // FILTRO ESTADO
+  //
+  // todos
+  // asignados
+  // sin-asignar
+  // =========================================================
+
+  filtroEstado: string = 'todos';
 
 
   // =========================================================
@@ -153,26 +162,22 @@ export class TablaComponent implements OnInit {
 
   errorJugador = '';
 
-  // ---------------------------------------------------------
-  // MENSAJES ELIMINAR JUGADOR
-  // ---------------------------------------------------------
-
-  mensajeEliminarJugador = '';
-
-  errorEliminarJugador = '';
-
-
-  // ---------------------------------------------------------
-  // ESTADOS DE OPERACIONES
-  // ---------------------------------------------------------
-
   guardandoJugador = false;
-
-  eliminandoJugador = false;
 
   asignandoTokens = false;
 
   desasignandoTokens = false;
+
+
+  // =========================================================
+  // ELIMINAR JUGADOR
+  // =========================================================
+
+  eliminandoJugador = false;
+
+  mensajeEliminarJugador = '';
+
+  errorEliminarJugador = '';
 
 
   // =========================================================
@@ -218,6 +223,7 @@ export class TablaComponent implements OnInit {
             response
           );
 
+
           this.cargando = false;
 
 
@@ -257,8 +263,8 @@ export class TablaComponent implements OnInit {
                 dni: token.dni ?? null,
 
                 jugadorId:
-                  token.jugadorId !== null &&
-                  token.jugadorId !== undefined
+                  token.jugadorId !== undefined &&
+                  token.jugadorId !== null
                     ? Number(token.jugadorId)
                     : null
 
@@ -273,7 +279,7 @@ export class TablaComponent implements OnInit {
 
 
           // =================================================
-          // MOSTRAR TOKENS
+          // MOSTRAR TODOS
           // =================================================
 
           this.mostrarTodosLosTokens();
@@ -287,6 +293,7 @@ export class TablaComponent implements OnInit {
             'ERROR OBTENIENDO TOKENS:',
             err
           );
+
 
           this.cargando = false;
 
@@ -335,19 +342,7 @@ export class TablaComponent implements OnInit {
 
 
           this.Jugadores =
-            (response.data ?? []).map(
-              (jugador: any) => ({
-
-                id: Number(jugador.id),
-
-                nombre: jugador.nombre,
-
-                apellido: jugador.apellido,
-
-                dni: jugador.dni
-
-              })
-            );
+            response.data ?? [];
 
 
           console.log(
@@ -388,18 +383,16 @@ export class TablaComponent implements OnInit {
     const nombre =
       this.nuevoJugador.nombre.trim();
 
-
     const apellido =
       this.nuevoJugador.apellido.trim();
-
 
     const dni =
       this.nuevoJugador.dni.trim();
 
 
-    // -------------------------------------------------------
+    // =======================================================
     // VALIDACIONES
-    // -------------------------------------------------------
+    // =======================================================
 
     if (!nombre) {
 
@@ -434,9 +427,9 @@ export class TablaComponent implements OnInit {
     this.guardandoJugador = true;
 
 
-    // -------------------------------------------------------
-    // CREAR JUGADOR
-    // -------------------------------------------------------
+    // =======================================================
+    // CREAR
+    // =======================================================
 
     this.adminService
       .crearJugador(
@@ -473,9 +466,9 @@ export class TablaComponent implements OnInit {
             'Jugador creado correctamente.';
 
 
-          // -------------------------------------------------
+          // =================================================
           // LIMPIAR FORMULARIO
-          // -------------------------------------------------
+          // =================================================
 
           this.nuevoJugador = {
 
@@ -488,16 +481,16 @@ export class TablaComponent implements OnInit {
           };
 
 
-          // -------------------------------------------------
+          // =================================================
           // RECARGAR JUGADORES
-          // -------------------------------------------------
+          // =================================================
 
           this.obtenerJugadores();
 
 
-          // -------------------------------------------------
+          // =================================================
           // SELECCIONAR AUTOMÁTICAMENTE
-          // -------------------------------------------------
+          // =================================================
 
           if (response.data?.id) {
 
@@ -507,6 +500,8 @@ export class TablaComponent implements OnInit {
             this.tokensSeleccionados.clear();
 
             this.busquedaToken = '';
+
+            this.filtroEstado = 'todos';
 
             this.mostrarTodosLosTokens();
 
@@ -538,174 +533,6 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // ELIMINAR JUGADOR
-  // =========================================================
-
-  eliminarJugador(): void {
-
-    this.mensajeEliminarJugador = '';
-
-    this.errorEliminarJugador = '';
-
-
-    // -------------------------------------------------------
-    // VALIDAR SELECCIÓN
-    // -------------------------------------------------------
-
-    if (
-      this.jugadorSeleccionadoId === null ||
-      this.jugadorSeleccionadoId === 0
-    ) {
-
-      this.errorEliminarJugador =
-        'Seleccioná un jugador para eliminar.';
-
-      return;
-
-    }
-
-
-    // -------------------------------------------------------
-    // BUSCAR JUGADOR
-    // -------------------------------------------------------
-
-    const jugador =
-      this.Jugadores.find(
-        j =>
-          j.id === this.jugadorSeleccionadoId
-      );
-
-
-    if (!jugador) {
-
-      this.errorEliminarJugador =
-        'No se encontró el jugador seleccionado.';
-
-      return;
-
-    }
-
-
-    // -------------------------------------------------------
-    // CONFIRMACIÓN
-    // -------------------------------------------------------
-
-    const confirmar = confirm(
-
-      `¿Estás seguro de eliminar al jugador?\n\n` +
-
-      `${jugador.nombre} ${jugador.apellido}\n` +
-
-      `DNI: ${jugador.dni}\n\n` +
-
-      `Los tokens asociados quedarán SIN ASIGNAR.`
-
-    );
-
-
-    if (!confirmar) {
-
-      return;
-
-    }
-
-
-    // -------------------------------------------------------
-    // ELIMINANDO
-    // -------------------------------------------------------
-
-    this.eliminandoJugador = true;
-
-
-    // -------------------------------------------------------
-    // LLAMAR BACKEND
-    // -------------------------------------------------------
-
-    this.adminService
-      .eliminarJugador(jugador.id)
-      .subscribe({
-
-        next: (response: any) => {
-
-          console.log(
-            'RESPUESTA ELIMINAR JUGADOR:',
-            response
-          );
-
-
-          this.eliminandoJugador = false;
-
-
-          if (!response?.success) {
-
-            this.errorEliminarJugador =
-              response?.message ||
-              'No se pudo eliminar el jugador.';
-
-            return;
-
-          }
-
-
-          // -------------------------------------------------
-          // MENSAJE
-          // -------------------------------------------------
-
-          this.mensajeEliminarJugador =
-            response?.message ||
-            'Jugador eliminado correctamente.';
-
-
-          // -------------------------------------------------
-          // LIMPIAR SELECCIÓN
-          // -------------------------------------------------
-
-          this.jugadorSeleccionadoId = null;
-
-          this.tokensSeleccionados.clear();
-
-          this.busquedaToken = '';
-
-
-          // -------------------------------------------------
-          // RECARGAR JUGADORES
-          // -------------------------------------------------
-
-          this.obtenerJugadores();
-
-
-          // -------------------------------------------------
-          // RECARGAR TOKENS
-          // -------------------------------------------------
-
-          this.obtenerTokens();
-
-        },
-
-
-        error: (err: any) => {
-
-          console.error(
-            'ERROR ELIMINANDO JUGADOR:',
-            err
-          );
-
-
-          this.eliminandoJugador = false;
-
-
-          this.errorEliminarJugador =
-            err?.error?.message ||
-            'No se pudo eliminar el jugador.';
-
-        }
-
-      });
-
-  }
-
-
-  // =========================================================
   // SELECCIONAR JUGADOR
   // =========================================================
 
@@ -717,9 +544,9 @@ export class TablaComponent implements OnInit {
     );
 
 
-    // -------------------------------------------------------
-    // LIMPIAR SELECCIÓN ANTERIOR
-    // -------------------------------------------------------
+    // =======================================================
+    // LIMPIAR SELECCIÓN
+    // =======================================================
 
     this.tokensSeleccionados.clear();
 
@@ -733,10 +560,12 @@ export class TablaComponent implements OnInit {
 
     this.busquedaToken = '';
 
+    this.filtroEstado = 'todos';
 
-    // -------------------------------------------------------
-    // MOSTRAR TODOS LOS TOKENS
-    // -------------------------------------------------------
+
+    // =======================================================
+    // MOSTRAR TOKENS
+    // =======================================================
 
     this.mostrarTodosLosTokens();
 
@@ -749,9 +578,9 @@ export class TablaComponent implements OnInit {
 
   private mostrarTodosLosTokens(): void {
 
-    // -------------------------------------------------------
-    // SIN JUGADOR SELECCIONADO
-    // -------------------------------------------------------
+    // =======================================================
+    // SIN JUGADOR
+    // =======================================================
 
     if (
       this.jugadorSeleccionadoId === null
@@ -766,18 +595,18 @@ export class TablaComponent implements OnInit {
     }
 
 
-    // -------------------------------------------------------
-    // COPIAR TODOS LOS TOKENS
-    // -------------------------------------------------------
+    // =======================================================
+    // COPIAR TODOS
+    // =======================================================
 
     this.Tokens = [
       ...this.todosLosTokens
     ];
 
 
-    // -------------------------------------------------------
-    // APLICAR FILTRO
-    // -------------------------------------------------------
+    // =======================================================
+    // APLICAR FILTROS
+    // =======================================================
 
     this.filtrarTokens();
 
@@ -792,74 +621,135 @@ export class TablaComponent implements OnInit {
 
   // =========================================================
   // FILTRAR TOKENS
+  //
+  // FILTROS:
+  //
+  // 1. TEXTO
+  // 2. ESTADO
   // =========================================================
 
   filtrarTokens(): void {
 
     const texto =
-      (this.busquedaToken ?? '').trim();
+      (this.busquedaToken ?? '')
+        .trim()
+        .toLowerCase();
 
-
-    // -------------------------------------------------------
-    // SIN BÚSQUEDA
-    // -------------------------------------------------------
-
-    if (!texto) {
-
-      this.TokensFiltrados = [
-        ...this.Tokens
-      ];
-
-      return;
-
-    }
-
-
-    // -------------------------------------------------------
-    // NORMALIZAR BÚSQUEDA
-    // -------------------------------------------------------
-
-    const busqueda =
-      texto.toLowerCase();
-
-
-    // -------------------------------------------------------
-    // FILTRAR
-    // -------------------------------------------------------
 
     this.TokensFiltrados =
-      this.Tokens.filter(
-        token => {
-
-          const id =
-            String(token.id ?? '')
-              .toLowerCase();
+      this.Tokens.filter(token => {
 
 
-          const codigo =
-            String(token.codigo ?? '')
-              .toLowerCase();
+        // ===================================================
+        // FILTRO TEXTO
+        // ===================================================
+
+        const id =
+          String(
+            token.id ?? ''
+          ).toLowerCase();
 
 
-          return (
-            id.includes(busqueda) ||
-            codigo.includes(busqueda)
-          );
+        const codigo =
+          String(
+            token.codigo ?? ''
+          ).toLowerCase();
+
+
+        const coincideTexto =
+          !texto ||
+          id.includes(texto) ||
+          codigo.includes(texto);
+
+
+        if (!coincideTexto) {
+
+          return false;
 
         }
-      );
+
+
+        // ===================================================
+        // DETERMINAR ESTADO
+        // ===================================================
+
+        const estaAsignado =
+          token.jugadorId !== null &&
+          token.jugadorId !== undefined &&
+          token.jugadorId !== 0;
+
+
+        // ===================================================
+        // FILTRO ASIGNADOS
+        // ===================================================
+
+        if (
+          this.filtroEstado === 'asignados'
+        ) {
+
+          return estaAsignado;
+
+        }
+
+
+        // ===================================================
+        // FILTRO SIN ASIGNAR
+        // ===================================================
+
+        if (
+          this.filtroEstado === 'sin-asignar'
+        ) {
+
+          return !estaAsignado;
+
+        }
+
+
+        // ===================================================
+        // TODOS
+        // ===================================================
+
+        return true;
+
+      });
 
 
     console.log(
       'BUSQUEDA:',
-      busqueda
+      texto
     );
 
+    console.log(
+      'FILTRO ESTADO:',
+      this.filtroEstado
+    );
 
     console.log(
       'TOKENS FILTRADOS:',
       this.TokensFiltrados
     );
+
+  }
+
+
+  // =========================================================
+  // CAMBIAR FILTRO DE ESTADO
+  // =========================================================
+
+  cambiarFiltroEstado(): void {
+
+    console.log(
+      'FILTRO DE ESTADO:',
+      this.filtroEstado
+    );
+
+
+    // Limpiar selección anterior
+    this.tokensSeleccionados.clear();
+
+
+    // Aplicar filtros
+    this.filtrarTokens();
 
   }
 
@@ -878,7 +768,7 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // SELECCIONAR / DESELECCIONAR TOKEN
+  // SELECCIONAR TOKEN
   // =========================================================
 
   seleccionarToken(
@@ -922,7 +812,7 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // VERIFICAR TOKEN SELECCIONADO
+  // TOKEN SELECCIONADO
   // =========================================================
 
   tokenSeleccionado(
@@ -937,16 +827,17 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // SELECCIONAR TODOS LOS TOKENS VISIBLES
+  // SELECCIONAR TODOS
   // =========================================================
 
   seleccionarTodos(
     seleccionado: boolean
   ): void {
 
-    // -------------------------------------------------------
-    // DESELECCIONAR VISIBLES
-    // -------------------------------------------------------
+
+    // =======================================================
+    // DESELECCIONAR
+    // =======================================================
 
     if (!seleccionado) {
 
@@ -965,9 +856,9 @@ export class TablaComponent implements OnInit {
     }
 
 
-    // -------------------------------------------------------
-    // SELECCIONAR VISIBLES
-    // -------------------------------------------------------
+    // =======================================================
+    // SELECCIONAR
+    // =======================================================
 
     this.TokensFiltrados.forEach(
       token => {
@@ -991,8 +882,7 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // VERIFICAR SI TODOS LOS TOKENS VISIBLES
-  // ESTÁN SELECCIONADOS
+  // TODOS LOS VISIBLES SELECCIONADOS
   // =========================================================
 
   todosTokensFiltradosSeleccionados(): boolean {
@@ -1017,7 +907,7 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // VERIFICAR SI HAY SELECCIÓN PARCIAL
+  // SELECCIÓN PARCIAL
   // =========================================================
 
   haySeleccionParcial(): boolean {
@@ -1051,9 +941,9 @@ export class TablaComponent implements OnInit {
     this.errorJugador = '';
 
 
-    // -------------------------------------------------------
+    // =======================================================
     // VALIDAR JUGADOR
-    // -------------------------------------------------------
+    // =======================================================
 
     if (
       this.jugadorSeleccionadoId === null
@@ -1067,9 +957,9 @@ export class TablaComponent implements OnInit {
     }
 
 
-    // -------------------------------------------------------
-    // NO PERMITIR ASIGNAR A SIN ASIGNAR
-    // -------------------------------------------------------
+    // =======================================================
+    // NO ASIGNAR A SIN ASIGNAR
+    // =======================================================
 
     if (
       this.jugadorSeleccionadoId === 0
@@ -1083,9 +973,9 @@ export class TablaComponent implements OnInit {
     }
 
 
-    // -------------------------------------------------------
+    // =======================================================
     // VALIDAR TOKENS
-    // -------------------------------------------------------
+    // =======================================================
 
     if (
       this.tokensSeleccionados.size === 0
@@ -1111,7 +1001,6 @@ export class TablaComponent implements OnInit {
     console.log(
       'ASIGNANDO TOKENS:',
       {
-
         jugadorId:
           this.jugadorSeleccionadoId,
 
@@ -1122,9 +1011,9 @@ export class TablaComponent implements OnInit {
     );
 
 
-    // -------------------------------------------------------
-    // LLAMAR BACKEND
-    // -------------------------------------------------------
+    // =======================================================
+    // BACKEND
+    // =======================================================
 
     this.adminService
       .asociarTokensJugador(
@@ -1163,16 +1052,16 @@ export class TablaComponent implements OnInit {
             'Tokens asociados correctamente.';
 
 
-          // -------------------------------------------------
+          // =================================================
           // LIMPIAR SELECCIÓN
-          // -------------------------------------------------
+          // =================================================
 
           this.tokensSeleccionados.clear();
 
 
-          // -------------------------------------------------
+          // =================================================
           // RECARGAR TOKENS
-          // -------------------------------------------------
+          // =================================================
 
           this.obtenerTokens();
 
@@ -1212,9 +1101,9 @@ export class TablaComponent implements OnInit {
     this.errorJugador = '';
 
 
-    // -------------------------------------------------------
+    // =======================================================
     // VALIDAR MODO
-    // -------------------------------------------------------
+    // =======================================================
 
     if (
       this.jugadorSeleccionadoId !== 0
@@ -1228,9 +1117,9 @@ export class TablaComponent implements OnInit {
     }
 
 
-    // -------------------------------------------------------
+    // =======================================================
     // VALIDAR TOKENS
-    // -------------------------------------------------------
+    // =======================================================
 
     if (
       this.tokensSeleccionados.size === 0
@@ -1259,9 +1148,9 @@ export class TablaComponent implements OnInit {
     );
 
 
-    // -------------------------------------------------------
-    // LLAMAR BACKEND
-    // -------------------------------------------------------
+    // =======================================================
+    // BACKEND
+    // =======================================================
 
     this.adminService
       .desasignarTokensJugador(
@@ -1296,16 +1185,16 @@ export class TablaComponent implements OnInit {
             'Tokens desasignados correctamente.';
 
 
-          // -------------------------------------------------
-          // LIMPIAR SELECCIÓN
-          // -------------------------------------------------
+          // =================================================
+          // LIMPIAR
+          // =================================================
 
           this.tokensSeleccionados.clear();
 
 
-          // -------------------------------------------------
-          // RECARGAR TOKENS
-          // -------------------------------------------------
+          // =================================================
+          // RECARGAR
+          // =================================================
 
           this.obtenerTokens();
 
@@ -1326,6 +1215,166 @@ export class TablaComponent implements OnInit {
           this.errorJugador =
             err?.error?.message ||
             'No se pudieron desasignar los tokens.';
+
+        }
+
+      });
+
+  }
+
+
+  // =========================================================
+  // ELIMINAR JUGADOR
+  // =========================================================
+
+  eliminarJugador(): void {
+
+    this.mensajeEliminarJugador = '';
+
+    this.errorEliminarJugador = '';
+
+
+    // =======================================================
+    // VALIDAR
+    // =======================================================
+
+    if (
+      this.jugadorSeleccionadoId === null ||
+      this.jugadorSeleccionadoId === 0
+    ) {
+
+      this.errorEliminarJugador =
+        'Seleccioná un jugador válido para eliminar.';
+
+      return;
+
+    }
+
+
+    const jugador =
+      this.Jugadores.find(
+        j =>
+          j.id ===
+          this.jugadorSeleccionadoId
+      );
+
+
+    if (!jugador) {
+
+      this.errorEliminarJugador =
+        'No se encontró el jugador seleccionado.';
+
+      return;
+
+    }
+
+
+    // =======================================================
+    // CONFIRMACIÓN
+    // =======================================================
+
+    const confirmar =
+      confirm(
+        `¿Estás seguro de eliminar al jugador ${jugador.nombre} ${jugador.apellido}?\n\n` +
+        `Los tokens asociados serán desasignados.`
+      );
+
+
+    if (!confirmar) {
+
+      return;
+
+    }
+
+
+    this.eliminandoJugador = true;
+
+
+    console.log(
+      'ELIMINANDO JUGADOR:',
+      jugador.id
+    );
+
+
+    // =======================================================
+    // BACKEND
+    // =======================================================
+
+    this.adminService
+      .eliminarJugador(
+        jugador.id
+      )
+      .subscribe({
+
+        next: (response: any) => {
+
+          console.log(
+            'RESPUESTA ELIMINAR JUGADOR:',
+            response
+          );
+
+
+          this.eliminandoJugador = false;
+
+
+          if (!response?.success) {
+
+            this.errorEliminarJugador =
+              response?.message ||
+              'No se pudo eliminar el jugador.';
+
+            return;
+
+          }
+
+
+          this.mensajeEliminarJugador =
+            response?.message ||
+            'Jugador eliminado correctamente.';
+
+
+          // =================================================
+          // LIMPIAR SELECCIÓN
+          // =================================================
+
+          this.jugadorSeleccionadoId = null;
+
+          this.tokensSeleccionados.clear();
+
+          this.busquedaToken = '';
+
+          this.filtroEstado = 'todos';
+
+          this.Tokens = [];
+
+          this.TokensFiltrados = [];
+
+
+          // =================================================
+          // RECARGAR
+          // =================================================
+
+          this.obtenerJugadores();
+
+          this.obtenerTokens();
+
+        },
+
+
+        error: (err: any) => {
+
+          console.error(
+            'ERROR ELIMINANDO JUGADOR:',
+            err
+          );
+
+
+          this.eliminandoJugador = false;
+
+
+          this.errorEliminarJugador =
+            err?.error?.message ||
+            'No se pudo eliminar el jugador.';
 
         }
 
