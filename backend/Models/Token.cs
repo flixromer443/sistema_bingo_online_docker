@@ -10,6 +10,7 @@ namespace Slamdunk.WebApi.Models
     {
         public int Id { get; set; }
         public string Codigo { get; set; }
+        public int? JugadorId { get; set; }
         public Jugador? Jugador { get; set; }
         public List<Carton> Cartones { get; set; }
 

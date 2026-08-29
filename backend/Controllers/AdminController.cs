@@ -355,6 +355,116 @@ public class AdminController : ControllerBase
             });
         }
     }
+
+    // =========================================================
+    // DESASIGNAR TOKENS DE JUGADOR
+    // =========================================================
+
+    [HttpPost("desasignarTokensJugador")]
+    public async Task<IActionResult> DesasignarTokensJugador(
+    [FromBody] DesasignarTokensJugadorRequest request)
+    {
+        try
+        {
+            // -------------------------------------------------
+            // VALIDAR TOKENS
+            // -------------------------------------------------
+
+            if (request.Tokens == null ||
+                request.Tokens.Count == 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "No se seleccionaron tokens."
+                });
+            }
+
+
+            // -------------------------------------------------
+            // OBTENER TOKENS
+            // -------------------------------------------------
+
+            var tokens = await _context.Tokens
+                .Where(t => request.Tokens.Contains(t.Id))
+                .ToListAsync();
+
+
+            // -------------------------------------------------
+            // VERIFICAR QUE EXISTAN TODOS
+            // -------------------------------------------------
+
+            var tokensEncontrados = tokens
+                .Select(t => t.Id)
+                .ToHashSet();
+
+            var tokensNoEncontrados = request.Tokens
+                .Where(id => !tokensEncontrados.Contains(id))
+                .ToList();
+
+            if (tokensNoEncontrados.Count > 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Uno o más tokens no existen.",
+                    tokensNoEncontrados
+                });
+            }
+
+
+            // -------------------------------------------------
+            // DESASIGNAR
+            // -------------------------------------------------
+
+            foreach (var token in tokens)
+            {
+                token.JugadorId = null;
+                token.Jugador = null;
+            }
+
+
+            // -------------------------------------------------
+            // GUARDAR
+            // -------------------------------------------------
+
+            var cambios = await _context.SaveChangesAsync();
+
+
+            Console.WriteLine(
+                $"Tokens desasignados: {tokens.Count}"
+            );
+
+            Console.WriteLine(
+                $"Cambios guardados: {cambios}"
+            );
+
+
+            return Ok(new
+            {
+                success = true,
+                message = "Tokens desasignados correctamente.",
+                data = new
+                {
+                    tokens = tokens.Select(t => t.Id).ToList(),
+                    cambiosGuardados = cambios
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"ERROR DESASIGNANDO TOKENS: {ex}"
+            );
+
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "Error desasignando los tokens.",
+                error = ex.Message
+            });
+        }
+    }
 }
 
 
@@ -380,5 +490,14 @@ public class AsociarTokensJugadorRequest
 {
     public int JugadorId { get; set; }
 
+    public List<int> Tokens { get; set; } = new();
+}
+
+// =============================================================
+// REQUEST DESASIGNAR TOKENS
+// =============================================================
+
+public class DesasignarTokensJugadorRequest
+{
     public List<int> Tokens { get; set; } = new();
 }

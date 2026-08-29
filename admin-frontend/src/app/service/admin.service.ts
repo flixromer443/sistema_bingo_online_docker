@@ -82,4 +82,21 @@ export class AdminService {
 
   }
 
+    // =========================================================
+  // DESASIGNAR TOKENS DE JUGADOR
+  // =========================================================
+
+  desasignarTokensJugador(
+    tokens: number[]
+  ): Observable<any> {
+
+    return this.http.post<any>(
+      this.apiAdmin + 'desasignarTokensJugador',
+      {
+        tokens: tokens
+      }
+    );
+
+  }
+
 }

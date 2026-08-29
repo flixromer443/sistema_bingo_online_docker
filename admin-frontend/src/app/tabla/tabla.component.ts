@@ -25,6 +25,9 @@ export interface TokenJugador {
 
   dni: string | null;
 
+  // Jugador actualmente asociado
+  jugadorId: number | null;
+
 }
 
 
@@ -71,10 +74,17 @@ export class TablaComponent implements OnInit {
 
 
   // =========================================================
-  // TOKENS
+  // TOKENS QUE SE MUESTRAN EN LA TABLA
   // =========================================================
 
   Tokens: TokenJugador[] = [];
+
+
+  // =========================================================
+  // TODOS LOS TOKENS
+  // =========================================================
+
+  private todosLosTokens: TokenJugador[] = [];
 
 
   // =========================================================
@@ -86,6 +96,10 @@ export class TablaComponent implements OnInit {
 
   // =========================================================
   // JUGADOR SELECCIONADO
+  //
+  // null = ninguno
+  // 0    = SIN ASIGNAR
+  // > 0  = jugador
   // =========================================================
 
   jugadorSeleccionadoId: number | null = null;
@@ -108,11 +122,10 @@ export class TablaComponent implements OnInit {
 
   // =========================================================
   // TOKENS SELECCIONADOS
-  // IMPORTANTE:
-  // Se utiliza Set porque el HTML utiliza .has() y .size
   // =========================================================
 
-  tokensSeleccionados: Set<number> = new Set<number>();
+  tokensSeleccionados: Set<number> =
+    new Set<number>();
 
 
   // =========================================================
@@ -130,6 +143,8 @@ export class TablaComponent implements OnInit {
   guardandoJugador = false;
 
   asignandoTokens = false;
+
+  desasignandoTokens = false;
 
 
   // =========================================================
@@ -164,7 +179,6 @@ export class TablaComponent implements OnInit {
 
     this.error = '';
 
-
     this.adminService
       .obtenerTokens()
       .subscribe({
@@ -176,13 +190,14 @@ export class TablaComponent implements OnInit {
             response
           );
 
-
           this.cargando = false;
 
 
           if (!response?.success) {
 
             this.Tokens = [];
+
+            this.todosLosTokens = [];
 
             this.error =
               response?.message ||
@@ -193,14 +208,22 @@ export class TablaComponent implements OnInit {
           }
 
 
-          this.Tokens =
+          this.todosLosTokens =
             response.data ?? [];
 
 
           console.log(
-            'TOKENS:',
-            this.Tokens
+            'TODOS LOS TOKENS:',
+            this.todosLosTokens
           );
+
+
+          // =================================================
+          // IMPORTANTE:
+          // SIEMPRE MOSTRAMOS TODOS LOS TOKENS
+          // =================================================
+
+          this.mostrarTodosLosTokens();
 
         },
 
@@ -212,11 +235,11 @@ export class TablaComponent implements OnInit {
             err
           );
 
-
           this.cargando = false;
 
           this.Tokens = [];
 
+          this.todosLosTokens = [];
 
           this.error =
             err?.error?.message ||
@@ -414,6 +437,10 @@ export class TablaComponent implements OnInit {
             this.jugadorSeleccionadoId =
               Number(response.data.id);
 
+            this.tokensSeleccionados.clear();
+
+            this.mostrarTodosLosTokens();
+
           }
 
         },
@@ -454,22 +481,56 @@ export class TablaComponent implements OnInit {
 
 
     // -------------------------------------------------------
-    // LIMPIAR TOKENS SELECCIONADOS
+    // LIMPIAR SELECCIÓN ANTERIOR
     // -------------------------------------------------------
 
     this.tokensSeleccionados.clear();
 
+    this.mensajeJugador = '';
+
+    this.errorJugador = '';
+
+
+    // -------------------------------------------------------
+    // MOSTRAR TODOS LOS TOKENS
+    // -------------------------------------------------------
+
+    this.mostrarTodosLosTokens();
+
+  }
+
+
+  // =========================================================
+  // MOSTRAR TODOS LOS TOKENS
+  // =========================================================
+
+  private mostrarTodosLosTokens(): void {
+
+    // -------------------------------------------------------
+    // SIN JUGADOR SELECCIONADO
+    // -------------------------------------------------------
 
     if (this.jugadorSeleccionadoId === null) {
+
+      this.Tokens = [];
 
       return;
 
     }
 
 
+    // -------------------------------------------------------
+    // MOSTRAR TODOS
+    // -------------------------------------------------------
+
+    this.Tokens = [
+      ...this.todosLosTokens
+    ];
+
+
     console.log(
-      'ID DEL JUGADOR:',
-      this.jugadorSeleccionadoId
+      'MOSTRANDO TODOS LOS TOKENS:',
+      this.Tokens
     );
 
   }
@@ -477,14 +538,6 @@ export class TablaComponent implements OnInit {
 
   // =========================================================
   // SELECCIONAR / DESELECCIONAR TOKEN
-  // =========================================================
-  //
-  // El HTML manda:
-  //
-  // (change)="seleccionarToken(token.id, $event)"
-  //
-  // Por eso recibimos Event y obtenemos checked.
-  //
   // =========================================================
 
   seleccionarToken(
@@ -519,7 +572,9 @@ export class TablaComponent implements OnInit {
 
     console.log(
       'TOKENS SELECCIONADOS:',
-      Array.from(this.tokensSeleccionados)
+      Array.from(
+        this.tokensSeleccionados
+      )
     );
 
   }
@@ -570,7 +625,9 @@ export class TablaComponent implements OnInit {
 
     console.log(
       'TODOS LOS TOKENS SELECCIONADOS:',
-      Array.from(this.tokensSeleccionados)
+      Array.from(
+        this.tokensSeleccionados
+      )
     );
 
   }
@@ -597,6 +654,22 @@ export class TablaComponent implements OnInit {
 
       this.errorJugador =
         'Seleccioná un jugador.';
+
+      return;
+
+    }
+
+
+    // -------------------------------------------------------
+    // NO PERMITIR ASIGNAR A "SIN ASIGNAR"
+    // -------------------------------------------------------
+
+    if (
+      this.jugadorSeleccionadoId === 0
+    ) {
+
+      this.errorJugador =
+        'Para desasignar tokens utilizá el botón "Desasignar tokens".';
 
       return;
 
@@ -636,6 +709,7 @@ export class TablaComponent implements OnInit {
 
         tokens:
           tokens
+
       }
     );
 
@@ -711,6 +785,139 @@ export class TablaComponent implements OnInit {
           this.errorJugador =
             err?.error?.message ||
             'No se pudieron asociar los tokens.';
+
+        }
+
+      });
+
+  }
+
+
+  // =========================================================
+  // DESASIGNAR TOKENS
+  // =========================================================
+
+  desasignarTokens(): void {
+
+    this.mensajeJugador = '';
+
+    this.errorJugador = '';
+
+
+    // -------------------------------------------------------
+    // VALIDAR QUE ESTEMOS EN SIN ASIGNAR
+    // -------------------------------------------------------
+
+    if (
+      this.jugadorSeleccionadoId !== 0
+    ) {
+
+      this.errorJugador =
+        'Seleccioná "SIN ASIGNAR" para desasignar tokens.';
+
+      return;
+
+    }
+
+
+    // -------------------------------------------------------
+    // VALIDAR TOKENS
+    // -------------------------------------------------------
+
+    if (
+      this.tokensSeleccionados.size === 0
+    ) {
+
+      this.errorJugador =
+        'Seleccioná al menos un token para desasignar.';
+
+      return;
+
+    }
+
+
+    this.desasignandoTokens = true;
+
+
+    const tokens =
+      Array.from(
+        this.tokensSeleccionados
+      );
+
+
+    console.log(
+      'DESASIGNANDO TOKENS:',
+      tokens
+    );
+
+
+    // -------------------------------------------------------
+    // LLAMAR BACKEND
+    // -------------------------------------------------------
+
+    this.adminService
+      .desasignarTokensJugador(
+        tokens
+      )
+      .subscribe({
+
+        next: (response: any) => {
+
+          console.log(
+            'RESPUESTA DESASIGNAR TOKENS:',
+            response
+          );
+
+
+          this.desasignandoTokens = false;
+
+
+          if (!response?.success) {
+
+            this.errorJugador =
+              response?.message ||
+              'No se pudieron desasignar los tokens.';
+
+            return;
+
+          }
+
+
+          this.mensajeJugador =
+            response?.message ||
+            'Tokens desasignados correctamente.';
+
+
+          // -------------------------------------------------
+          // LIMPIAR SELECCIÓN
+          // -------------------------------------------------
+
+          this.tokensSeleccionados.clear();
+
+
+          // -------------------------------------------------
+          // RECARGAR TOKENS
+          // -------------------------------------------------
+
+          this.obtenerTokens();
+
+        },
+
+
+        error: (err: any) => {
+
+          console.error(
+            'ERROR DESASIGNANDO TOKENS:',
+            err
+          );
+
+
+          this.desasignandoTokens = false;
+
+
+          this.errorJugador =
+            err?.error?.message ||
+            'No se pudieron desasignar los tokens.';
 
         }
 
