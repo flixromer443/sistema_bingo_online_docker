@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router'; // <-- Asegurate de importar Router si lo usas
 import { ApiControllerService } from '../service/api-controller.service';
-import { AdminService } from '../service/admin.service'; // <-- 1. Importamos el servicio de administración
+import { AdminService } from '../service/admin.service';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-crear',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, RouterLinkActive, FormsModule], // <-- 2. Eliminamos 'CrearComponent' de aquí (evita error circular)
+  imports: [RouterLink, RouterOutlet, RouterLinkActive, FormsModule],
   templateUrl: './crear.component.html',
   styleUrl: './crear.component.css'
 })
@@ -16,13 +16,29 @@ export class CrearComponent {
   nombre = "";
   edad!: number;
 
+  // 6 elementos fijos, cada uno con su Línea y Bingo
+  listaJugadas = [
+    { numero: 1, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' },
+    { numero: 2, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' },
+    { numero: 3, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' },
+    { numero: 4, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' },
+    { numero: 5, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' },
+    { numero: 6, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' }
+  ];
+
   constructor(
     private _usuarios: ApiControllerService,
-    private _adminService: AdminService // <-- 3. Inyectamos AdminService
+    private _adminService: AdminService,
+    private router: Router // <-- Inyectamos Router por si querés navegar a los resultados
   ){}
 
-  crearUsuario(){
+  // MÉTODO NUEVO REQUERIDO POR EL BOTÓN
+  verResultados(): void {
+    // Aquí puedes redirigir a tu vista de resultados o mostrar algo
+    this.router.navigate(['/tabla']); // Cambia '/tabla' por la ruta de tu pantalla de resultados si es diferente
+  }
 
+  crearUsuario(){
     if (this.nombre.length >= 8 && this.edad.valueOf() >= 18) {
       const listaUsuarios = {
         name: this.nombre,
@@ -58,10 +74,6 @@ export class CrearComponent {
       });
     }
   }
-
-  // =========================================================
-  // MÉTODO PARA REINICIAR SORTEO
-  // =========================================================
 
   confirmarReiniciarSorteo(): void {
     Swal.fire({
@@ -103,4 +115,13 @@ export class CrearComponent {
     });
   }
 
+  descargarCuponera(): void {
+    // Lógica para descargar la cuponera (ej: llamada a servicio o descarga de archivo)
+    console.log('Descargando cuponera...');
+  }
+
+  descargarPlanillaControl(): void {
+    // Lógica para descargar la planilla de control
+    console.log('Descargando planilla de control...');
+  }
 }

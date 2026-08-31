@@ -1,19 +1,62 @@
-<div class="content">
-    <h1>Agregar usuario</h1>
-    <div class="card-content">
-        <div class="card">
-            <div class="info">
-                <input type="text" placeholder="Nombre" [(ngModel)]="nombre" minlength="8" required>
-            </div>
-            <div class="info">
-                <input type="number" placeholder="Mayor de 18 años" [(ngModel)]="edad">
-            </div>
-            <div class="buttons">
-                <button class="w3-button" (click)="crearUsuario()">Agregar <i class="fa fa-plus"></i></button>
-                <button class="w3-button w3-red w3-hover-dark-gray" (click)="confirmarReiniciarSorteo()">
-                    Reiniciar Sorteo <i class="fa fa-refresh"></i>
-                </button>
-            </div>
+<div class="tabla-container">
+
+    <div class="titulo-seccion">
+        <h1>Gestión de Sorteo y Premios</h1>
+        <p>Administrá los premios por jugada y utilizá el panel de control para gestionar el sistema.</p>
+    </div>
+
+    <div class="card card-seccion-completa">
+        <h2>Premios por Jugada</h2>
+        
+        <div class="grid-premios">
+            @for (jugada of listaJugadas; track jugada.numero) {
+                <details class="jugada-collapse">
+                    
+                    <summary>
+                        Jugada N° {{ jugada.numero }}
+                    </summary>
+
+                    <div class="jugada-contenido">
+                        <div class="campo-grupo" style="margin-bottom: 15px;">
+                            <span class="subtitulo-premio">Premio Línea</span>
+                            <div class="campo">
+                                <input type="text" placeholder="Descripción Premio Línea" [(ngModel)]="jugada.premioLinea">
+                            </div>
+                        </div>
+
+                        <div class="campo-grupo">
+                            <span class="subtitulo-premio">Premio Bingo</span>
+                            <div class="campo">
+                                <input type="text" placeholder="Descripción Premio Bingo" [(ngModel)]="jugada.premioBingo">
+                            </div>
+                        </div>
+                    </div>
+
+                </details>
+            }
         </div>
     </div>
+
+    <div class="card card-seccion-completa">
+        <h2>Panel de Control</h2>
+        
+        <div class="acciones-panel-horizontal">
+            <button type="button" class="btn btn-primary" (click)="verResultados()">
+                Ver resultados del sorteo <i class="fa fa-trophy"></i>
+            </button>
+            
+            <button type="button" class="btn btn-success" (click)="descargarCuponera()">
+                Descargar cuponera <i class="fa fa-download"></i>
+            </button>
+
+            <button type="button" class="btn btn-warning" (click)="descargarPlanillaControl()">
+                Descargar planilla de control <i class="fa fa-file-excel-o"></i>
+            </button>
+
+            <button type="button" class="btn btn-danger" (click)="confirmarReiniciarSorteo()">
+                Reiniciar Sorteo <i class="fa fa-refresh"></i>
+            </button>
+        </div>
+    </div>
+
 </div>
