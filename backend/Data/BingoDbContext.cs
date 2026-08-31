@@ -33,6 +33,13 @@ namespace Data
                 .HasForeignKey(t => t.JugadorId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Premio>()
+                .HasOne(t => t.Jugador)
+                .WithMany(j => j.Premios)
+                .HasForeignKey(t => t.JugadorId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

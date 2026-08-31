@@ -12,19 +12,17 @@ namespace Slamdunk.WebApi.Models
         public int NumeroJugada { get; set; }
         public List<Carton> Cartones { get; set; }
         public List<Premio> Premios { get; set; }
-        public List<Ganador>? Ganadores { get; set; }
 
         public Jugada()
         {
         }
 
-        public Jugada(int id, int numeroJugada, List<Carton> cartones, List<Premio> premios, List<Ganador>? ganadores)
+        public Jugada(int id, int numeroJugada, List<Carton> cartones, List<Premio> premios)
         {
             Id = id;
             NumeroJugada = numeroJugada;
             Cartones = cartones;
             Premios = premios;
-            Ganadores = ganadores;
         }
     }
 }

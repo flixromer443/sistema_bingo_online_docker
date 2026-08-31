@@ -10,15 +10,18 @@ namespace Slamdunk.WebApi.Models
     {
         public int Id { get; set; }
         public Jugada Jugada{ get; set; }
+        public int? JugadorId { get; set; }
+        public Jugador? Jugador { get; set; } //ganador
         public decimal Valor { get; set; }
         public Premio()
         {
         }
 
-        public Premio(int id, Jugada jugada, decimal valor)
+        public Premio(int id, Jugada jugada, Jugador? jugador, decimal valor)
         {
             Id = id;
             Jugada = jugada;
+            Jugador = jugador;
             Valor = valor;
         }
     }
