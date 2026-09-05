@@ -6,13 +6,13 @@ import { AdminService } from '../service/admin.service';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-crear',
+  selector: 'app-carga-datos-sorteo',
   standalone: true,
   imports: [RouterLink, RouterOutlet, RouterLinkActive, FormsModule],
-  templateUrl: './crear.component.html',
-  styleUrl: './crear.component.css'
+  templateUrl: './carga-datos-sorteo.component.html',
+  styleUrl: './carga-datos-sorteo.component.css'
 })
-export class CrearComponent {
+export class CargaDatosSorteoComponent {
   nombre = "";
   edad!: number;
 

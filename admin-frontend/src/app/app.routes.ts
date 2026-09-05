@@ -1,17 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { TablaComponent } from './tabla/tabla.component';
+import { CargaDatosJugadoresComponent } from './carga-datos-jugadores/carga-datos-jugadores.component';
 import { HomeComponent } from './home/home.component';
-import { DetalleComponent } from './detalle/detalle.component';
-import { ModificarComponent } from './modificar/modificar.component';
-import { CrearComponent } from './crear/crear.component';
+import { CargaDatosSorteoComponent } from './carga-datos-sorteo/carga-datos-sorteo.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
-    { path: 'tabla', component: TablaComponent },
-    { path: 'detalle/:id', component: DetalleComponent },
-    { path: 'modificar/:id', component: ModificarComponent },
-    { path: 'crear', component: CrearComponent },
+    { path: 'carga-datos-jugadores', component: CargaDatosJugadoresComponent },
+    { path: 'carga-datos-sorteo', component: CargaDatosSorteoComponent },
     { path: '**', component: HomeComponent }
 ];
 @NgModule({

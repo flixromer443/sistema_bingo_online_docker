@@ -61,7 +61,7 @@ export interface Jugador {
 
 @Component({
 
-  selector: 'app-tabla',
+  selector: 'app-carga-datos-jugadores',
 
   standalone: true,
 
@@ -70,14 +70,14 @@ export interface Jugador {
     FormsModule
   ],
 
-  templateUrl: './tabla.component.html',
+  templateUrl: './carga-datos-jugadores.component.html',
 
-  styleUrl: './tabla.component.css'
+  styleUrl: './carga-datos-jugadores.component.css'
 
 })
 
 
-export class TablaComponent implements OnInit {
+export class CargaDatosJugadoresComponent implements OnInit {
 
 
   // =========================================================
