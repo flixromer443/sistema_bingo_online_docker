@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router'; // <-- Asegurate de importar Router si lo usas
 import { ApiControllerService } from '../../service/api-controller.service';
 import { AdminService } from '../../service/admin.service';
+import { Global } from '../../service/global';
+
 import Swal from 'sweetalert2';
 
 @Component({
@@ -25,6 +27,10 @@ export class CargaDatosSorteoComponent {
     { numero: 5, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' },
     { numero: 6, premioLinea: '', ganadorLinea: '', premioBingo: '', ganadorBingo: '' }
   ];
+
+  private uriPlanillaControl = Global.uriPlanillaControl;
+  private uriCuponera = Global.uriCuponera;
+
 
   constructor(
     private _usuarios: ApiControllerService,
@@ -116,12 +122,10 @@ export class CargaDatosSorteoComponent {
   }
 
   descargarCuponera(): void {
-    const url = 'https://ejemplo.com/cuponera';
-    window.open(url, '_blank');
+    window.open(this.uriCuponera, '_blank');
   }
 
   descargarPlanillaControl(): void {
-    const url = 'https://ejemplo.com/planilla-control';
-    window.open(url, '_blank');
+    window.open(this.uriPlanillaControl, '_blank');
   }
 }
