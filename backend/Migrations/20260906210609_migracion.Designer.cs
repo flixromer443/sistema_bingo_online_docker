@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace sistema_bingo_online.Migrations
 {
     [DbContext(typeof(BingoDbContext))]
-    [Migration("20260831102338_migracion")]
+    [Migration("20260906210609_migracion")]
     partial class migracion
     {
         /// <inheritdoc />
@@ -187,6 +187,10 @@ namespace sistema_bingo_online.Migrations
 
                     b.Property<int?>("JugadorId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal>("Valor")
                         .HasColumnType("numeric");

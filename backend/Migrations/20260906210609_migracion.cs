@@ -84,6 +84,7 @@ namespace sistema_bingo_online.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     JugadaId = table.Column<int>(type: "integer", nullable: false),
                     JugadorId = table.Column<int>(type: "integer", nullable: true),
+                    Tipo = table.Column<string>(type: "text", nullable: false),
                     Valor = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>

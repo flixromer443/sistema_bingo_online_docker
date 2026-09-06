@@ -18,22 +18,30 @@
 
                     <div class="jugada-contenido">
                         <div class="campo-grupo" style="margin-bottom: 15px;">
-                            <span class="subtitulo-premio">Premio Línea</span>
+                            <span class="subtitulo-premio">Premio Línea ($ / Monto)</span>
                             <div class="campo">
-                                <input type="text" placeholder="Descripción Premio Línea" [(ngModel)]="jugada.premioLinea">
+                                <!-- Cambiado a number o text según prefieras, acorde a tu validación de valor -->
+                                <input type="number" placeholder="Ej: 5000" [(ngModel)]="jugada.premioLinea">
                             </div>
                         </div>
 
                         <div class="campo-grupo">
-                            <span class="subtitulo-premio">Premio Bingo</span>
+                            <span class="subtitulo-premio">Premio Bingo ($ / Monto)</span>
                             <div class="campo">
-                                <input type="text" placeholder="Descripción Premio Bingo" [(ngModel)]="jugada.premioBingo">
+                                <input type="number" placeholder="Ej: 15000" [(ngModel)]="jugada.premioBingo">
                             </div>
                         </div>
                     </div>
 
                 </details>
             }
+        </div>
+
+        <!-- Botón para disparar el guardado -->
+        <div style="margin-top: 20px; text-align: right;">
+            <button type="button" class="btn btn-primary" (click)="guardarPremiosJugadas()">
+                Guardar Premios <i class="fa fa-save"></i>
+            </button>
         </div>
     </div>
 

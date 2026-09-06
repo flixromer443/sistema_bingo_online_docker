@@ -185,6 +185,10 @@ namespace sistema_bingo_online.Migrations
                     b.Property<int?>("JugadorId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("Valor")
                         .HasColumnType("numeric");
 

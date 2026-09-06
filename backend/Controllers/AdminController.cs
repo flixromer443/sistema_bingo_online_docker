@@ -842,6 +842,131 @@ public class AdminController : ControllerBase
             });
         }
     }
+
+
+    [HttpPost("guardarPremios")]
+    public async Task<IActionResult> GuardarPremios(
+    [FromBody] GuardarPremiosRequest request)
+    {
+        try
+        {
+            if (request == null || request.Premios == null)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "La información de los premios es obligatoria."
+                });
+            }
+
+            foreach (var premio in request.Premios)
+            {
+                if (premio.JugadaId <= 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "La jugada indicada no es válida."
+                    });
+                }
+
+                if (premio.Tipo != "LINEA" && premio.Tipo != "BINGO")
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El tipo de premio debe ser LINEA o BINGO."
+                    });
+                }
+
+                if (premio.Valor < 0)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "El valor del premio no puede ser negativo."
+                    });
+                }
+            }
+
+            foreach (var premioRequest in request.Premios)
+            {
+                var premioExistente = await _context.Premios
+                    .FirstOrDefaultAsync(p =>
+                        p.JugadaId == premioRequest.JugadaId &&
+                        p.Tipo == premioRequest.Tipo);
+
+                if (premioExistente != null)
+                {
+                    premioExistente.Valor = premioRequest.Valor;
+                }
+                else
+                {
+                    var premio = new Premio
+                    {
+                        JugadaId = premioRequest.JugadaId,
+                        Tipo = premioRequest.Tipo,
+                        Valor = premioRequest.Valor,
+                        JugadorId = null
+                    };
+
+                    _context.Premios.Add(premio);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Premios guardados correctamente."
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "Error guardando los premios.",
+                error = ex.Message
+            });
+        }
+    }
+
+    // =========================================================
+    // OBTENER PREMIOS POR JUGADA
+    // =========================================================
+
+    [HttpGet("obtenerPremios")]
+    public async Task<IActionResult> ObtenerPremios()
+    {
+        try
+        {
+            var premios = await _context.Premios // Asegúrate de que el DbSet se llame Premios o como corresponda en tu contexto
+                .Select(p => new
+                {
+                    jugadaId = p.JugadaId, // O el nombre de la propiedad en tu modelo
+                    tipo = p.Tipo,         // "LINEA" o "BINGO"
+                    valor = p.Valor
+                })
+                .ToListAsync();
+
+            return Ok(new
+            {
+                success = true,
+                data = premios
+            });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new
+            {
+                success = false,
+                message = "Error obteniendo los premios.",
+                error = ex.Message
+            });
+        }
+    }
 }
 
 
@@ -878,4 +1003,18 @@ public class AsociarTokensJugadorRequest
 public class DesasignarTokensJugadorRequest
 {
     public List<int> Tokens { get; set; } = new();
+}
+
+public class GuardarPremiosRequest
+{
+    public List<PremioRequest> Premios { get; set; } = new();
+}
+
+public class PremioRequest
+{
+    public int JugadaId { get; set; }
+
+    public string Tipo { get; set; } = string.Empty;
+
+    public decimal Valor { get; set; }
 }
