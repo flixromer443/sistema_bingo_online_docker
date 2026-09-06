@@ -122,6 +122,22 @@ public class TableroController : ControllerBase
         return Ok(numeroSorteado);
     }
 
+    [HttpGet("obtenerPremiosPorJugada/{numeroJugada}")]
+    public async Task<IActionResult> ObtenerPremiosPorJugada(int numeroJugada)
+    {
+        var premios = await _context.Premios
+            .Where(p => p.Jugada != null && p.Jugada.NumeroJugada == numeroJugada)
+            .Select(p => new
+            {
+                id = p.Id,
+                descripcion = p.Tipo,  // Usamos 'Tipo' de tu modelo
+                monto = p.Valor        // Usamos 'Valor' de tu modelo
+            })
+            .ToListAsync();
+
+        return Ok(premios);
+    }
+
 
 
 }
