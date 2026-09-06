@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router'; // <-- Asegurate de importar Router si lo usas
-import { ApiControllerService } from '../service/api-controller.service';
-import { AdminService } from '../service/admin.service';
+import { ApiControllerService } from '../../service/api-controller.service';
+import { AdminService } from '../../service/admin.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -116,12 +116,12 @@ export class CargaDatosSorteoComponent {
   }
 
   descargarCuponera(): void {
-    // Lógica para descargar la cuponera (ej: llamada a servicio o descarga de archivo)
-    console.log('Descargando cuponera...');
+    const url = 'https://ejemplo.com/cuponera';
+    window.open(url, '_blank');
   }
 
   descargarPlanillaControl(): void {
-    // Lógica para descargar la planilla de control
-    console.log('Descargando planilla de control...');
+    const url = 'https://ejemplo.com/planilla-control';
+    window.open(url, '_blank');
   }
 }
