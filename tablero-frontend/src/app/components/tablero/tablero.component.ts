@@ -57,6 +57,11 @@ export class TableroComponent implements OnDestroy {
   msgLinea = false;
   msgBingo = false;
 
+  // Variables para las alertas tipo Bootstrap
+  alertaMensaje: string | null = null;
+  alertaTitulo: string = '';
+  alertaClase: string = 'alert-info';
+
   constructor(
       private tableroService: TableroService,
       private globalService: GlobalService
@@ -84,6 +89,7 @@ export class TableroComponent implements OnDestroy {
   iniciar(){
       this.juegoIniciado = true;
       this.mostrarProximaJugada = false;
+      this.alertaMensaje = null;
 
       this.globalService.obtenerFlagPorVariable('ULTIMA_JUGADA')
         .subscribe({
@@ -99,7 +105,7 @@ export class TableroComponent implements OnDestroy {
         });
 
       this.cargarCartones();
-      this.cargarPremios(); // Carga los premios de la jugada actual
+      this.cargarPremios(); 
       this.sortearNumero();
 
       this.timer = interval(this.INTERVALO)
@@ -125,7 +131,6 @@ export class TableroComponent implements OnDestroy {
         .subscribe({
             next: (premios: any[]) => {
                 this.premios = premios;
-                // Filtramos según la descripción para separar línea y bingo
                 this.premioLinea = this.premios.find(p => p.descripcion?.toLowerCase().includes('linea'));
                 this.premioBingo = this.premios.find(p => p.descripcion?.toLowerCase().includes('bingo'));
             },
@@ -203,6 +208,7 @@ export class TableroComponent implements OnDestroy {
     this.hayBingo = false;
     this.msgLinea = false;
     this.msgBingo = false;
+    this.alertaMensaje = null;
 
     this.mostrarProximaJugada = false;
     this.esUltimaJugada = this.numeroJugada === this.ultimaJugada;
@@ -280,7 +286,7 @@ export class TableroComponent implements OnDestroy {
 
     this.lineas = [];
 
-    this.cartones.forEach((c: Carton) => {
+    this.cartones.forEach((c: any) => {
         if (this.linea(c)) {
             this.lineas.push(c);
         }
@@ -294,7 +300,21 @@ export class TableroComponent implements OnDestroy {
 
         if (!this.msgLinea) {
             this.msgLinea = true;
-            alert(`¡LÍNEA! Cartón ganador: ${this.cartonGanadorLinea.id} ${this.lineas.length > 1 ? '(Había ' + this.lineas.length + ' líneas simultáneas, se seleccionó una al azar)' : ''}`);
+
+            // Obtenemos el nombre completo y el ID del jugador desde el cartón
+            const ganador: any = this.cartonGanadorLinea;
+            const nombreCompleto = `${ganador.nombre || ''} ${ganador.apellido || ''}`.trim() || `Cartón #${ganador.id}`;
+            
+            this.alertaTitulo = '¡LÍNEA!';
+            this.alertaMensaje = `Felicitaciones a ${nombreCompleto} (Cartón N° ${ganador.id})`;
+            this.alertaClase = 'alert-warning';
+
+            // Actualizamos la tabla de premios en la BD si existe el premio de línea
+            if (this.premioLinea && ganador.jugadorId) {
+                this.tableroService.actualizarGanadorPremio(this.premioLinea.id, ganador.jugadorId).subscribe({
+                    error: err => console.error('Error al actualizar premio de línea', err)
+                });
+            }
         }
     }
   }
@@ -305,15 +325,11 @@ export class TableroComponent implements OnDestroy {
 
     this.bingos = [];
 
-    this.cartones.forEach((c: Carton) => {
+    this.cartones.forEach((c: any) => {
         if (this.bingo(c)) {
             this.bingos.push(c);
         }
     });
-
-    if (this.bingos.length > 1) {
-        // Lógica múltiple si aplica
-    }
 
     if (this.bingos.length > 0) {
         this.hayBingo = true;
@@ -325,7 +341,19 @@ export class TableroComponent implements OnDestroy {
             this.msgBingo = true;
             this.detener();
 
-            alert(`¡¡BINGO!! Cartón ganador: ${this.cartonGanadorBingo.id} ${this.bingos.length > 1 ? '(Había ' + this.bingos.length + ' bingos simultáneos, se seleccionó uno al azar)' : ''}`);
+            const ganador: any = this.cartonGanadorBingo;
+            const nombreCompleto = `${ganador.nombre || ''} ${ganador.apellido || ''}`.trim() || `Cartón #${ganador.id}`;
+
+            this.alertaTitulo = '¡¡BINGO!!';
+            this.alertaMensaje = `Felicitaciones a ${nombreCompleto} (Cartón N° ${ganador.id})`;
+            this.alertaClase = 'alert-success';
+
+            // Actualizamos la tabla de premios en la BD si existe el premio de bingo
+            if (this.premioBingo && ganador.jugadorId) {
+                this.tableroService.actualizarGanadorPremio(this.premioBingo.id, ganador.jugadorId).subscribe({
+                    error: err => console.error('Error al actualizar premio de bingo', err)
+                });
+            }
 
             if (!this.esUltimaJugada) {
                 this.mostrarProximaJugada = true;
@@ -356,5 +384,6 @@ export class TableroComponent implements OnDestroy {
     this.hayBingo = false;
     this.msgLinea = false;
     this.msgBingo = false;
+    this.alertaMensaje = null;
   }
 }

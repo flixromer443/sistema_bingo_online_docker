@@ -23,7 +23,9 @@ export class TableroService {
     );
   }
 
-  /** * Guarda un número sorteado en una jugada. */ 
+  /** 
+   * Guarda un número sorteado en una jugada. 
+   */ 
   guardarNumeroSorteado(numeroJugada: number, numero: number): Observable<any> {
      return this.http.post(this.apiTablero + 'guardarNumeroSorteado', null, 
       { params: { numeroJugada: numeroJugada, numero: numero } });
@@ -35,6 +37,17 @@ export class TableroService {
   obtenerPremiosPorJugada(numeroJugada: number): Observable<any[]> {
     return this.http.get<any[]>(
       this.apiTablero + 'obtenerPremiosPorJugada/' + numeroJugada
+    );
+  }
+
+  /**
+   * Actualiza el premio asociado al jugador ganador (Línea o Bingo).
+   */
+  actualizarGanadorPremio(premioId: number, jugadorId: number): Observable<any> {
+    return this.http.put(
+      `${this.apiTablero}actualizarGanadorPremio`, 
+      {}, 
+      { params: { premioId: premioId, jugadorId: jugadorId } }
     );
   }
 

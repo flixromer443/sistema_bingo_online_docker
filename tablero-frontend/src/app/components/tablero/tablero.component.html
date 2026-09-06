@@ -70,8 +70,16 @@
 
     </aside>
 
-    <!-- TABLERO -->
+    <!-- TABLERO Y ALERTAS -->
     <section class="panel-tablero">
+
+        <!-- Alertas dinámicas tipo Bootstrap -->
+        @if(alertaMensaje){
+            <div class="alert {{ alertaClase }} alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                <strong>{{ alertaTitulo }}</strong> {{ alertaMensaje }}
+            </div>
+        }
+
         @for(fila of filas; track fila){
             <div class="fila">
                 @for(numero of obtenerNumerosFila(fila); track numero){
