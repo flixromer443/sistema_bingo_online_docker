@@ -804,13 +804,19 @@ public class AdminController : ControllerBase
         try
         {
             // -------------------------------------------------
-            // 1. VACIAR LA TABLA USANDO ENTITY FRAMEWORK (Sin SQL crudo)
+            // 1. VACIAR LA TABLA DE NUMEROS SORTEADOS
             // -------------------------------------------------
             var todosLosSorteados = await _context.NumerosSorteados.ToListAsync();
             _context.NumerosSorteados.RemoveRange(todosLosSorteados);
 
             // -------------------------------------------------
-            // 2. DESASOCIAR TODOS LOS TOKENS
+            // 2. VACIAR / LIMPIAR LA TABLA DE PREMIOS
+            // -------------------------------------------------
+            var todosLosPremios = await _context.Premios.ToListAsync();
+            _context.Premios.RemoveRange(todosLosPremios);
+
+            // -------------------------------------------------
+            // 3. DESASOCIAR TODOS LOS TOKENS
             // -------------------------------------------------
             var tokensAsignados = await _context.Tokens
                 .Where(t => t.JugadorId != null)
@@ -827,8 +833,9 @@ public class AdminController : ControllerBase
             return Ok(new
             {
                 success = true,
-                message = "Sorteo reiniciado correctamente.",
-                tokensDesasociados = tokensAsignados.Count
+                message = "Sorteo reiniciado y premios limpiados correctamente.",
+                tokensDesasociados = tokensAsignados.Count,
+                premiosEliminados = todosLosPremios.Count
             });
         }
         catch (Exception ex)
