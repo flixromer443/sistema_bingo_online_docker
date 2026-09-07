@@ -164,6 +164,21 @@ public class TableroController : ControllerBase
         return Ok(premios);
     }
 
+    // --- NUEVO ENDPOINT PARA NOTIFICAR LÍNEA O BINGO POR SIGNALR ---
+    [HttpPost("notificarPremio")]
+    public async Task<IActionResult> NotificarPremio([FromQuery] int numeroJugada, [FromQuery] string tipoPremio)
+    {
+        var jugada = await _context.Jugadas.FirstOrDefaultAsync(j => j.NumeroJugada == numeroJugada);
+        if (jugada == null)
+        {
+            return NotFound("La jugada no existe.");
+        }
 
+        // Envía el evento al grupo correspondiente para que el frontend pinte de verde
+        await _hub.Clients
+            .Group($"JUGADA_{numeroJugada}")
+            .SendAsync("PremioActualizado", new { tipoPremio = tipoPremio, numeroJugada = numeroJugada });
 
+        return Ok(new { mensaje = $"Notificación de {tipoPremio} enviada correctamente." });
+    }
 }

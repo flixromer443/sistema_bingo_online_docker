@@ -51,4 +51,15 @@ export class TableroService {
     );
   }
 
+  /**
+   * Notifica línea o bingo mediante el backend.
+   */
+  notificarPremio(numeroJugada: number, tipoPremio: string): Observable<any> {
+    return this.http.post(
+      `${this.apiTablero}notificarPremio`,
+      null,
+      { params: { numeroJugada: numeroJugada, tipoPremio: tipoPremio } }
+    );
+  }
+
 }

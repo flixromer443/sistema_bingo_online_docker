@@ -238,6 +238,37 @@ export class JugadorSignalrService {
 
 
   // =====================================================
+  // ESCUCHAR PREMIO ACTUALIZADO
+  // =====================================================
+
+  escucharPremioActualizado(
+    callback: (data: { tipoPremio: string; jugadorId: number; premioId: number }) => void
+  ): void {
+
+    if (!this.hubConnection) {
+      console.error('❌ SignalR no está conectado');
+      return;
+    }
+
+    console.log('🟢 Registrando listener premioActualizado');
+
+    this.hubConnection.on(
+      'premioActualizado',
+      (data) => {
+        console.log('🏆 EVENTO premioActualizado RECIBIDO', data);
+        callback(data);
+      }
+    );
+
+    console.log('🟢 Listener premioActualizado registrado correctamente');
+
+  }
+
+
+
+
+
+  // =====================================================
   // DESCONECTAR
   // =====================================================
 
@@ -260,6 +291,42 @@ export class JugadorSignalrService {
 
     return Promise.resolve();
 
+
+  }
+
+  // =====================================================
+  // SALIR DE UNA JUGADA
+  // =====================================================
+
+  salirDeJugada(
+    numeroJugada:number
+  ): Promise<void> {
+
+
+    if(!this.hubConnection){
+
+      return Promise.reject(
+        'SignalR no conectado'
+      );
+
+    }
+
+
+
+    console.log(
+      'Saliendo de jugada:',
+      numeroJugada
+    );
+
+
+
+    return this.hubConnection.invoke(
+
+      'SalirDeJugada',
+
+      numeroJugada
+
+    );
 
   }
 

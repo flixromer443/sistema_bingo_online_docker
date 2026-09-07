@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription, interval } from 'rxjs';
 
@@ -64,11 +64,12 @@ export class TableroComponent implements OnDestroy {
 
   constructor(
       private tableroService: TableroService,
-      private globalService: GlobalService
+      private globalService: GlobalService,
+      private ngZone: NgZone
   ) {}
 
   ngOnDestroy(): void {
-      this.timer?.unsubscribe();
+      this.detener();
   }
 
   obtenerNumerosFila(fila: number): number[] {
@@ -161,13 +162,15 @@ export class TableroComponent implements OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.ultimoNumero = numero;
-          this.numerosSorteados.add(numero);
-          this.marcarNumeroEnCartones(numero);
-          this.verificarLinea();
-          this.verificarBingo();
+          if (!this.numerosSorteados.has(numero)) {
+            this.ultimoNumero = numero;
+            this.numerosSorteados.add(numero);
+            this.marcarNumeroEnCartones(numero);
+            this.verificarLinea();
+            this.verificarBingo();
+          }
         },
-        error: err => {
+        error: (err: any) => {
           console.error('No se pudo guardar el número sorteado', err);
         }
       });
@@ -301,7 +304,6 @@ export class TableroComponent implements OnDestroy {
         if (!this.msgLinea) {
             this.msgLinea = true;
 
-            // Obtenemos el nombre completo y el ID del jugador desde el cartón
             const ganador: any = this.cartonGanadorLinea;
             const nombreCompleto = `${ganador.nombre || ''} ${ganador.apellido || ''}`.trim() || `Cartón #${ganador.id}`;
             
@@ -309,12 +311,16 @@ export class TableroComponent implements OnDestroy {
             this.alertaMensaje = `Felicitaciones a ${nombreCompleto} (Cartón N° ${ganador.id})`;
             this.alertaClase = 'alert-warning';
 
-            // Actualizamos la tabla de premios en la BD si existe el premio de línea
             if (this.premioLinea && ganador.jugadorId) {
                 this.tableroService.actualizarGanadorPremio(this.premioLinea.id, ganador.jugadorId).subscribe({
-                    error: err => console.error('Error al actualizar premio de línea', err)
+                    error: (err: any) => console.error('Error al actualizar premio de línea', err)
                 });
             }
+
+            // Notificar al backend sobre la línea alcanzada
+            this.tableroService.notificarPremio(this.numeroJugada, 'LINEA').subscribe({
+              error: (err: any) => console.error('Error al notificar premio línea', err)
+            });
         }
     }
   }
@@ -348,12 +354,16 @@ export class TableroComponent implements OnDestroy {
             this.alertaMensaje = `Felicitaciones a ${nombreCompleto} (Cartón N° ${ganador.id})`;
             this.alertaClase = 'alert-success';
 
-            // Actualizamos la tabla de premios en la BD si existe el premio de bingo
             if (this.premioBingo && ganador.jugadorId) {
                 this.tableroService.actualizarGanadorPremio(this.premioBingo.id, ganador.jugadorId).subscribe({
-                    error: err => console.error('Error al actualizar premio de bingo', err)
+                    error: (err: any) => console.error('Error al actualizar premio de bingo', err)
                 });
             }
+
+            // Notificar al backend sobre el bingo alcanzado
+            this.tableroService.notificarPremio(this.numeroJugada, 'BINGO').subscribe({
+              error: (err: any) => console.error('Error al notificar premio bingo', err)
+            });
 
             if (!this.esUltimaJugada) {
                 this.mostrarProximaJugada = true;
