@@ -11,6 +11,8 @@ import { Global } from './global';
 export class TableroService {
 
   private apiTablero = Global.apiTablero;
+  private apiGlobal = Global.apiGlobal;
+
 
   constructor(private http: HttpClient) { }
 
@@ -36,7 +38,7 @@ export class TableroService {
    */
   obtenerPremiosPorJugada(numeroJugada: number): Observable<any[]> {
     return this.http.get<any[]>(
-      this.apiTablero + 'obtenerPremiosPorJugada/' + numeroJugada
+      this.apiGlobal + 'obtenerPremiosPorJugada/' + numeroJugada
     );
   }
 
@@ -52,13 +54,13 @@ export class TableroService {
   }
 
   /**
-   * Notifica línea o bingo mediante el backend.
+   * Notifica línea o bingo mediante el backend enviando el número de jugada, el tipo de premio y el ID del cartón.
    */
-  notificarPremio(numeroJugada: number, tipoPremio: string): Observable<any> {
+  notificarPremio(numeroJugada: number, tipoPremio: string, cartonId: number): Observable<any> {
     return this.http.post(
       `${this.apiTablero}notificarPremio`,
       null,
-      { params: { numeroJugada: numeroJugada, tipoPremio: tipoPremio } }
+      { params: { numeroJugada: numeroJugada, tipoPremio: tipoPremio, cartonId: cartonId } }
     );
   }
 

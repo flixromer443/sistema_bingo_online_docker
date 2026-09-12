@@ -148,25 +148,9 @@ public class TableroController : ControllerBase
         return Ok(numeroSorteado);
     }
 
-    [HttpGet("obtenerPremiosPorJugada/{numeroJugada}")]
-    public async Task<IActionResult> ObtenerPremiosPorJugada(int numeroJugada)
-    {
-        var premios = await _context.Premios
-            .Where(p => p.Jugada != null && p.Jugada.NumeroJugada == numeroJugada)
-            .Select(p => new
-            {
-                id = p.Id,
-                descripcion = p.Tipo,  // Usamos 'Tipo' de tu modelo
-                monto = p.Valor        // Usamos 'Valor' de tu modelo
-            })
-            .ToListAsync();
-
-        return Ok(premios);
-    }
-
     // --- NUEVO ENDPOINT PARA NOTIFICAR LÍNEA O BINGO POR SIGNALR ---
     [HttpPost("notificarPremio")]
-    public async Task<IActionResult> NotificarPremio([FromQuery] int numeroJugada, [FromQuery] string tipoPremio)
+    public async Task<IActionResult> NotificarPremio([FromQuery] int numeroJugada, [FromQuery] string tipoPremio, [FromQuery] int cartonId)
     {
         var jugada = await _context.Jugadas.FirstOrDefaultAsync(j => j.NumeroJugada == numeroJugada);
         if (jugada == null)
@@ -174,11 +158,16 @@ public class TableroController : ControllerBase
             return NotFound("La jugada no existe.");
         }
 
-        // Envía el evento al grupo correspondiente para que el frontend pinte de verde
+        // Envía el evento al grupo incluyendo el cartonId específico
         await _hub.Clients
             .Group($"JUGADA_{numeroJugada}")
-            .SendAsync("PremioActualizado", new { tipoPremio = tipoPremio, numeroJugada = numeroJugada });
+            .SendAsync("PremioActualizado", new
+            {
+                tipoPremio = tipoPremio,
+                numeroJugada = numeroJugada,
+                cartonId = cartonId // <-- Enviamos el ID del cartón
+            });
 
-        return Ok(new { mensaje = $"Notificación de {tipoPremio} enviada correctamente." });
+        return Ok(new { mensaje = $"Notificación de {tipoPremio} para el cartón {cartonId} enviada correctamente." });
     }
 }

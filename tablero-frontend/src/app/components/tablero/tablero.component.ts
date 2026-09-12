@@ -317,8 +317,8 @@ export class TableroComponent implements OnDestroy {
                 });
             }
 
-            // Notificar al backend sobre la línea alcanzada
-            this.tableroService.notificarPremio(this.numeroJugada, 'LINEA').subscribe({
+            // Notificar al backend sobre la línea alcanzada enviando el id del cartón ganador
+            this.tableroService.notificarPremio(this.numeroJugada, 'LINEA', ganador.id).subscribe({
               error: (err: any) => console.error('Error al notificar premio línea', err)
             });
         }
@@ -360,8 +360,8 @@ export class TableroComponent implements OnDestroy {
                 });
             }
 
-            // Notificar al backend sobre el bingo alcanzado
-            this.tableroService.notificarPremio(this.numeroJugada, 'BINGO').subscribe({
+            // Notificar al backend sobre el bingo alcanzado enviando el id del cartón ganador
+            this.tableroService.notificarPremio(this.numeroJugada, 'BINGO', ganador.id).subscribe({
               error: (err: any) => console.error('Error al notificar premio bingo', err)
             });
 

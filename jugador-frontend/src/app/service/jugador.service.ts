@@ -10,6 +10,8 @@ import { Global } from './global';
 export class JugadorService {
 
   private apiJugador = Global.apiJugador;
+  private apiGlobal = Global.apiGlobal;
+
 
   constructor(
     private http: HttpClient
@@ -75,6 +77,18 @@ export class JugadorService {
       numeroJugada
     );
 
+  }
+
+  // =========================================================
+  // OBTENER PREMIOS POR JUGADA
+  // =========================================================
+
+  obtenerPremiosPorJugada(numeroJugada: number): Observable<any> {
+    return this.http.get<any>(
+      this.apiGlobal +
+      'obtenerPremiosPorJugada/' +
+      numeroJugada
+    );
   }
 
 }
