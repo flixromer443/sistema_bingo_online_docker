@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace sistema_bingo_online.Migrations
 {
     [DbContext(typeof(BingoDbContext))]
-    [Migration("20260824235710_migracion")]
+    [Migration("20260906210609_migracion")]
     partial class migracion
     {
         /// <inheritdoc />
@@ -185,12 +185,21 @@ namespace sistema_bingo_online.Migrations
                     b.Property<int>("JugadaId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("JugadorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<decimal>("Valor")
                         .HasColumnType("numeric");
 
                     b.HasKey("Id");
 
                     b.HasIndex("JugadaId");
+
+                    b.HasIndex("JugadorId");
 
                     b.ToTable("Premios");
                 });
@@ -262,7 +271,7 @@ namespace sistema_bingo_online.Migrations
                         .IsRequired();
 
                     b.HasOne("Slamdunk.WebApi.Models.Jugada", "Jugada")
-                        .WithMany("Ganadores")
+                        .WithMany()
                         .HasForeignKey("JugadaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -310,14 +319,22 @@ namespace sistema_bingo_online.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Slamdunk.WebApi.Models.Jugador", "Jugador")
+                        .WithMany("Premios")
+                        .HasForeignKey("JugadorId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Jugada");
+
+                    b.Navigation("Jugador");
                 });
 
             modelBuilder.Entity("Slamdunk.WebApi.Models.Token", b =>
                 {
                     b.HasOne("Slamdunk.WebApi.Models.Jugador", "Jugador")
                         .WithMany("Tokens")
-                        .HasForeignKey("JugadorId");
+                        .HasForeignKey("JugadorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Jugador");
                 });
@@ -331,13 +348,13 @@ namespace sistema_bingo_online.Migrations
                 {
                     b.Navigation("Cartones");
 
-                    b.Navigation("Ganadores");
-
                     b.Navigation("Premios");
                 });
 
             modelBuilder.Entity("Slamdunk.WebApi.Models.Jugador", b =>
                 {
+                    b.Navigation("Premios");
+
                     b.Navigation("Tokens");
                 });
 

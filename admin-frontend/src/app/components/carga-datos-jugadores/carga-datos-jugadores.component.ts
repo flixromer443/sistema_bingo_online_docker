@@ -1,19 +1,8 @@
-import {
-  Component,
-  OnInit
-} from '@angular/core';
+import {  Component,  OnInit } from '@angular/core';
+import {  CommonModule } from '@angular/common';
+import {  FormsModule } from '@angular/forms';
 
-import {
-  CommonModule
-} from '@angular/common';
-
-import {
-  FormsModule
-} from '@angular/forms';
-
-import {
-  AdminService
-} from '../service/admin.service';
+import {AdminService} from '../../service/admin.service';
 
 
 // =========================================================
@@ -61,7 +50,7 @@ export interface Jugador {
 
 @Component({
 
-  selector: 'app-tabla',
+  selector: 'app-carga-datos-jugadores',
 
   standalone: true,
 
@@ -70,14 +59,14 @@ export interface Jugador {
     FormsModule
   ],
 
-  templateUrl: './tabla.component.html',
+  templateUrl: './carga-datos-jugadores.component.html',
 
-  styleUrl: './tabla.component.css'
+  styleUrl: './carga-datos-jugadores.component.css'
 
 })
 
 
-export class TablaComponent implements OnInit {
+export class CargaDatosJugadoresComponent implements OnInit {
 
 
   // =========================================================

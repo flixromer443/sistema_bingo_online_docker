@@ -511,3 +511,25 @@ small {
 
 
 }
+
+/* Casilla marcada normalmente (ej. azul o gris) */
+.casilla.marcado {
+  background-color: #0d6efd;
+  color: white;
+}
+
+/* Casilla cuando se completa la LÍNEA (Verde) */
+.casilla.es-linea {
+  background-color: #198754 !important; /* Verde Bootstrap */
+  color: white !important;
+  border-color: #146c43 !important;
+}
+
+/* Casilla cuando se completa el BINGO (Verde más intenso o dorado) */
+.casilla.es-bingo {
+  background-color: #157347 !important;
+  color: white !important;
+  border-color: #0f5132 !important;
+  /* Opcional: un efecto extra para destacar el bingo */
+  box-shadow: 0 0 10px rgba(25, 135, 84, 0.8); 
+}

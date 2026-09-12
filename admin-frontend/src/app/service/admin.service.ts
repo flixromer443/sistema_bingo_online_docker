@@ -127,4 +127,23 @@ export class AdminService {
     );
   }
 
+  // =========================================================
+  // GUARDAR PREMIOS POR JUGADA
+  // =========================================================
+  guardarPremios(premios: any[]): Observable<any> {
+    return this.http.post<any>(
+      this.apiAdmin + 'guardarPremios',
+      { premios: premios }
+    );
+  }
+
+  // =========================================================
+  // OBTENER PREMIOS
+  // =========================================================
+  obtenerPremios(): Observable<any> {
+    return this.http.get<any>(
+      this.apiAdmin + 'obtenerPremios'
+    );
+  }
+
 }

@@ -1,24 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Slamdunk.WebApi.Models
 {
     public class Premio
     {
         public int Id { get; set; }
-        public Jugada Jugada{ get; set; }
+        public int JugadaId { get; set; }
+        public Jugada Jugada { get; set; } = null!;
+        public int? JugadorId { get; set; }
+        public Jugador? Jugador { get; set; }
+        public string Tipo { get; set; } = string.Empty;
         public decimal Valor { get; set; }
         public Premio()
         {
         }
 
-        public Premio(int id, Jugada jugada, decimal valor)
+        public Premio(int id, int jugadaId, Jugador? jugador, string tipo, decimal valor)
         {
             Id = id;
-            Jugada = jugada;
+            JugadaId = jugadaId;
+            Jugador = jugador;
+            Tipo = tipo;
             Valor = valor;
         }
     }

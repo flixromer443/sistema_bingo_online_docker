@@ -16,13 +16,16 @@ namespace Slamdunk.WebApi.Models
         public string? CorreoElectronico { get; set; }//opcional
         public string? Alias { get; set; } //opcional
         public List<Token>? Tokens { get; set; }
+        public List<Premio>? Premios { get; set; }
+
 
         public Jugador()
         {
             Tokens = new List<Token>();
+            Premios = new List<Premio>();
         }
 
-        public Jugador(int id, string nombre, string apellido, string dni, string telefono, string correoElectronico, string alias, List<Token> tokens)
+        public Jugador(int id, string nombre, string apellido, string dni, string? telefono, string? correoElectronico, string? alias, List<Token>? tokens, List<Premio>? premios)
         {
             Id = id;
             Nombre = nombre;
@@ -32,6 +35,7 @@ namespace Slamdunk.WebApi.Models
             CorreoElectronico = correoElectronico;
             Alias = alias;
             Tokens = tokens;
+            Premios = premios;
         }
     }
 }

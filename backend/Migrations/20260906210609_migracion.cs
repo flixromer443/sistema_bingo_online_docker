@@ -83,6 +83,8 @@ namespace sistema_bingo_online.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     JugadaId = table.Column<int>(type: "integer", nullable: false),
+                    JugadorId = table.Column<int>(type: "integer", nullable: true),
+                    Tipo = table.Column<string>(type: "text", nullable: false),
                     Valor = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
@@ -94,6 +96,12 @@ namespace sistema_bingo_online.Migrations
                         principalTable: "Jugadas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Premios_Jugadores_JugadorId",
+                        column: x => x.JugadorId,
+                        principalTable: "Jugadores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,7 +120,8 @@ namespace sistema_bingo_online.Migrations
                         name: "FK_Tokens_Jugadores_JugadorId",
                         column: x => x.JugadorId,
                         principalTable: "Jugadores",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -233,6 +242,11 @@ namespace sistema_bingo_online.Migrations
                 name: "IX_Premios_JugadaId",
                 table: "Premios",
                 column: "JugadaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Premios_JugadorId",
+                table: "Premios",
+                column: "JugadorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tokens_JugadorId",

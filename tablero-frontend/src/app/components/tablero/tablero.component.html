@@ -4,120 +4,95 @@
     <aside class="panel-lateral">
 
         <div class="jugada">
-
             @if(!esUltimaJugada){
-
                 <h2>JUGADA Nº</h2>
                 <span class="numero-jugada">{{ numeroJugada }}</span>
-
             } @else {
-
                 <h2>ÚLTIMA JUGADA</h2>
-
             }
-
         </div>
 
         <div class="ultimo-numero">
-
             <h3>ÚLTIMO NÚMERO</h3>
-
             <div class="bola">
-
                 {{ ultimoNumero == 0 ? '--' : (ultimoNumero < 10 ? '0' + ultimoNumero : ultimoNumero) }}
-
             </div>
-
         </div>
 
         <div class="acciones">
-
             @if(!juegoIniciado){
-
                 <button
                     class="btn iniciar"
                     (click)="iniciar()">
-
                     INICIAR
-
                 </button>
-
             }
 
             @if(mostrarProximaJugada){
-
                 <button
                     class="btn siguiente"
                     (click)="reiniciar()">
-
                     PRÓXIMA JUGADA
-
                 </button>
-
             }
-
         </div>
 
         <div class="estadisticas">
-
             <div>
-
-                <strong>Sorteados</strong>
-
-                {{ numerosSorteados.size }}/90
-
+                <strong>Sorteados </strong>
+                <span>{{ numerosSorteados.size }}/90</span>
             </div>
-
+            
+            <!-- Línea: Formato N° Carton : NUM_CARTON - PREMIO -->
             <div>
-
                 <strong>Línea</strong>
-
-                {{ lineas.length }}
-
+                <div class="info-premio">
+                    <span>N° Carton : </span>
+                    <span class="carton-ganador">{{ cartonGanadorLinea ? cartonGanadorLinea.id : '--' }}</span>
+                    @if(premioLinea){
+                        <span class="premio-monto"> - ${{ premioLinea.monto }}</span>
+                    }
+                </div>
             </div>
 
+            <!-- Bingo: Formato N° Carton : NUM_CARTON - PREMIO -->
             <div>
-
                 <strong>Bingo</strong>
-
-                {{ bingos.length }}
-
+                <div class="info-premio">
+                    <span>N° Carton : </span>
+                    <span class="carton-ganador">{{ cartonGanadorBingo ? cartonGanadorBingo.id : '--' }}</span>
+                    @if(premioBingo){
+                        <span class="premio-monto"> - ${{ premioBingo.monto }}</span>
+                    }
+                </div>
             </div>
-
         </div>
 
     </aside>
 
-    <!-- TABLERO -->
-
+    <!-- TABLERO Y ALERTAS -->
     <section class="panel-tablero">
 
-        @for(fila of filas; track fila){
-
-            <div class="fila">
-
-                @for(numero of obtenerNumerosFila(fila); track numero){
-
-                    <button
-
-                        class="numero"
-
-                        [class.seleccionado]="numerosSorteados.has(numero)"
-
-                        [class.ultimo]="ultimoNumero === numero"
-
-                        (click)="toggleNumero(numero)">
-
-                        {{ numero < 10 ? '0' + numero : numero }}
-
-                    </button>
-
-                }
-
+        <!-- Alertas dinámicas tipo Bootstrap -->
+        @if(alertaMensaje){
+            <div class="alert {{ alertaClase }} alert-dismissible fade show" role="alert" style="margin-bottom: 20px;">
+                <strong>{{ alertaTitulo }}</strong> {{ alertaMensaje }}
             </div>
-
         }
 
+        @for(fila of filas; track fila){
+            <div class="fila">
+                @for(numero of obtenerNumerosFila(fila); track numero){
+                    <button
+                        class="numero"
+                        [class.seleccionado]="numerosSorteados.has(numero)"
+                        [class.ultimo]="ultimoNumero === numero"
+                        (click)="toggleNumero(numero)">
+                        {{ numero < 10 ? '0' + numero : numero }}
+                    </button>
+                }
+            </div>
+        }
     </section>
 
 </div>
